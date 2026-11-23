@@ -234,3 +234,5 @@ a{color:var(--terracotta)}
 .member-detail-grid span{font-size:12px}
 .member-detail-actions{display:flex;justify-content:flex-end;margin-top:18px}
 @media(max-width:600px){.approved-member-card{align-items:flex-start;flex-direction:column}.member-detail-grid{grid-template-columns:1fr}.member-detail-dialog{padding:17px}}
+
+.access-panel{margin-top:22px}.access-list{display:grid;gap:9px}.access-user-row{display:grid;grid-template-columns:minmax(0,1fr) 190px auto;align-items:center;gap:12px;padding:13px;border:1px solid #e9dfd2;border-radius:9px;background:#fffcf7}.access-user-row strong,.access-user-row small{display:block}.access-user-row strong{font-size:13px;color:var(--sepia)}.access-user-row small{font-size:10px;color:var(--muted);margin-top:4px}.access-user-row select{height:39px;border:1px solid #e4d8c9;border-radius:7px;background:#fffefa;padding:0 9px;color:var(--sepia)}.access-user-row button{font-size:10px;padding:9px 12px}@media(max-width:650px){.access-user-row{grid-template-columns:1fr}.access-user-row select,.access-user-row button{width:100%}}
