@@ -16,7 +16,7 @@ onAuthStateChanged(auth, async (user) => {
     const snapshot = await get(ref(db, "members/" + user.uid));
     const profile = snapshot.val() || {};
     const isAdmin = profile.admins === true;
-    const isApprovedMember = profile.status === "aprovado" && !isAdmin;
+    const isApprovedMember = profile.status === "aprovado" || isAdmin;
 
     if (memberLink) memberLink.hidden = !isApprovedMember;
     if (adminLink) adminLink.hidden = !isAdmin;
