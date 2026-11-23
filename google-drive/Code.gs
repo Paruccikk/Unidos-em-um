@@ -4,7 +4,7 @@ const DRIVE_FOLDER_ID = PropertiesService.getScriptProperties().getProperty("DRI
 function doPost(e) {
   try {
     if (!FIREBASE_API_KEY || !DRIVE_FOLDER_ID) throw new Error("Configuração do servidor incompleta.");
-    const payload = JSON.parse(e.postData.contents || "{}");
+    const payload = JSON.parse((e.parameter && e.parameter.payload) || e.postData.contents || "{}");
     if (!payload.idToken || !payload.base64 || !payload.mimeType) throw new Error("Dados de envio incompletos.");
     if (!["image/jpeg", "image/png", "image/webp"].includes(payload.mimeType)) throw new Error("Formato de imagem não permitido.");
     const bytes = Utilities.base64Decode(payload.base64);
@@ -23,7 +23,11 @@ function doPost(e) {
     const file = DriveApp.getFolderById(DRIVE_FOLDER_ID).createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     const fileId = file.getId();
-    return json({ ok: true, fileId: fileId, url: "https://drive.google.com/uc?export=view&id=" + fileId });
-  } catch (err) { return json({ ok: false, error: err.message || "Falha ao enviar a foto." }); }
+    return htmlResponse({ ok: true, fileId: fileId, url: "https://drive.google.com/uc?export=view&id=" + fileId });
+  } catch (err) { return htmlResponse({ ok: false, error: err.message || "Falha ao enviar a foto." }); }
 }
-function json(value) { return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON); }
+function htmlResponse(value) {
+  const data = JSON.stringify(JSON.stringify(value)).replace(/</g, "\\u003c");
+  return HtmlService.createHtmlOutput("<!doctype html><html><body><script>window.parent.postMessage(" + data + ", '*');</script></body></html>")
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
