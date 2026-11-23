@@ -55,7 +55,64 @@ async function uploadToDrive(payload){
 }
 async function fileToBase64(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(",")[1]);reader.onerror=reject;reader.readAsDataURL(file)})}
 function showMessage(t,ok=false){$("#profile-message").textContent=t;$("#profile-message").className="message"+(ok?" success":"")}
-function setPhoto(url){const card=$("#card-photo"),preview=$("#form-photo-preview");if(url){card.src=url;card.classList.add("visible");$("#photo-placeholder").hidden=true;preview.src=url;preview.classList.add("visible");$("#form-photo-placeholder").hidden=true}else{card.removeAttribute("src");card.classList.remove("visible");$("#photo-placeholder").hidden=false;preview.removeAttribute("src");preview.classList.remove("visible");$("#form-photo-placeholder").hidden=false}}
+function setPhoto(url){
+  const card=$("#card-photo"),preview=$("#form-photo-preview");
+  const placeholder=$("#photo-placeholder"),previewPlaceholder=$("#form-photo-placeholder");
+
+  const extractDriveId=value=>{
+    const match=String(value||"").match(/(?:[?&]id=|\\/d\\/)([a-zA-Z0-9_-]{20,})/);
+    return match?match[1]:null;
+  };
+
+  const driveId=extractDriveId(url);
+  const sources=driveId
+    ? [
+        `https://drive.google.com/thumbnail?id=${driveId}&sz=w1000`,
+        `https://lh3.googleusercontent.com/d/${driveId}`,
+        `https://drive.google.com/uc?export=view&id=${driveId}`,
+        String(url)
+      ].filter((value,index,array)=>value&&array.indexOf(value)===index)
+    : (url?[String(url)]:[]);
+
+  const reset=(img,empty)=>{
+    img.onload=null;
+    img.onerror=null;
+    img.removeAttribute("src");
+    img.classList.remove("visible");
+    empty.hidden=false;
+  };
+
+  const loadWithFallback=(img,empty)=>{
+    reset(img,empty);
+    if(!sources.length)return;
+
+    let index=0;
+    const tryNext=()=>{
+      if(index>=sources.length){
+        img.onerror=null;
+        img.onload=null;
+        img.classList.remove("visible");
+        empty.hidden=false;
+        console.error("Não foi possível carregar a foto do membro. URLs testadas:",sources);
+        return;
+      }
+
+      const candidate=sources[index++];
+      img.onload=()=>{
+        img.onload=null;
+        img.onerror=null;
+        img.classList.add("visible");
+        empty.hidden=true;
+      };
+      img.onerror=tryNext;
+      img.src=candidate;
+    };
+    tryNext();
+  };
+
+  loadWithFallback(card,placeholder);
+  loadWithFallback(preview,previewPlaceholder);
+}
 function paintCard(d){const unit=units[d.unidadeId]||null;$("#member-unit").textContent=unit?unit.name+" • "+unit.pastor:"";$("#card-name").textContent=d.nome||"Seu nome aparecerá aqui";$("#card-cpf").textContent=d.cpf||"Não informado";$("#card-rg").textContent=d.rg||"Não informado";$("#card-affiliation").textContent=d.afiliacao||"Não informada";$("#card-birth-date").textContent=formatBirthDate(d.dataNascimento);$("#card-nationality").textContent=d.nacionalidade||"Não informada";$("#card-naturalness").textContent=d.naturalidade||"Não informada";$("#card-marital-status").textContent=d.estadoCivil||"Não informado";$("#card-member-since").textContent=formatMemberSince(d.membroDesde||d.aprovadoEm||d.criadoEm);$("#card-role").textContent=d.cargo||"Membro";$("#card-number").textContent="ID "+(currentUser?.uid||"").slice(0,8).toUpperCase();setPhoto(d.fotoUrl||"")}
 function updateCompletion(){const values=[$("#full-name").value,photoUrl||photoFile,$("#cpf").value,$("#rg").value,$("#affiliation").value,$("#birth-date").value,$("#nationality").value,$("#naturalness").value,$("#marital-status").value,$("#member-since").value,$("#role").value];const n=values.filter(Boolean).length;$("#completion").textContent=Math.round(n/values.length*100)+"%";$("#completion-bar").style.width=(n/values.length*100)+"%"}
 $("#toggle-settings").addEventListener("click",()=>{$("#settings-panel").classList.remove("hidden");$("#settings-panel").scrollIntoView({behavior:"smooth",block:"start"})});
