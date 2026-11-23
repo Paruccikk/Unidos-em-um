@@ -65,5 +65,74 @@ $("#photo-input").addEventListener("change",e=>{const f=e.target.files[0];if(!f)
 $("#profile-form").addEventListener("input",updateCompletion);
 $("#profile-form").addEventListener("submit",async e=>{e.preventDefault();if(!currentUser)return;const btn=$("#profile-form button[type=submit]");btn.disabled=true;showMessage("Salvando informações...",false);try{if(photoFile){if(!DRIVE_UPLOAD_URL)throw new Error("Integração com o Google Drive pendente de configuração. Siga google-drive/README.md e informe a URL /exec em assets/js/painel.js.");const token=await currentUser.getIdToken();const result=await uploadToDrive({idToken:token,fileName:photoFile.name,mimeType:photoFile.type,base64:await fileToBase64(photoFile)});if(!result.ok||!result.url)throw new Error(result.error||"O Google Drive não retornou o link da foto.");photoUrl=result.url}const data={nome:$("#full-name").value.trim(),cpf:$("#cpf").value.trim(),rg:$("#rg").value.trim(),afiliacao:$("#affiliation").value.trim(),dataNascimento:$("#birth-date").value,nacionalidade:$("#nationality").value.trim(),naturalidade:$("#naturalness").value.trim(),estadoCivil:$("#marital-status").value,membroDesde:$("#member-since").value||dateForInput(memberData.aprovadoEm||memberData.criadoEm),cargo:$("#role").value.trim()||"Membro",fotoUrl:photoUrl,email:currentUser.email,atualizadoEm:serverTimestamp()};await update(ref(db,"members/"+currentUser.uid),data);memberData={...memberData,...data};paintCard(memberData);photoFile=null;updateCompletion();showMessage("Seus dados foram salvos com sucesso!",true)}catch(err){console.error(err);showMessage(err.message||"Não foi possível salvar. Verifique a conexão e as permissões.")}finally{btn.disabled=false}});
 $("#logout-btn").addEventListener("click",async()=>{await signOut(auth);location.replace("index.html")});
-async function ensureJsPdf(){if(window.jspdf?.jsPDF)return;const urls=["https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js","https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"];for(const src of urls){try{await new Promise((resolve,reject)=>{const script=document.createElement("script");script.src=src;script.onload=resolve;script.onerror=()=>reject(new Error("Falha ao carregar "+src));document.head.appendChild(script)});if(window.jspdf?.jsPDF)return}catch(error){console.warn(error)}}throw new Error("Não foi possível carregar o gerador de PDF.")}
-$("#download-pdf").addEventListener("click",async()=>{try{await ensureJsPdf()}catch(error){alert("O gerador de PDF não carregou. A carteirinha será aberta para impressão; escolha 'Salvar como PDF'.");window.print();return}const {jsPDF}=window.jspdf;const doc=new jsPDF({orientation:"landscape",unit:"mm",format:[180,120]});doc.setFillColor(23,57,47);doc.roundedRect(5,5,170,110,4,4,"F");doc.setDrawColor(198,169,106);doc.roundedRect(8,8,164,104,3,3);doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(13);doc.text("IGREJA PENTECOSTAL UNIDOS EM UM",14,18);doc.setFontSize(7);doc.setTextColor(220,203,157);doc.text("CARTEIRA DE MEMBRO",14,23);const unit=units[memberData.unidadeId];if(unit){doc.setFontSize(7);doc.text(unit.name+" - "+unit.pastor,53,28);}if(photoUrl){try{const img=$("#card-photo");const c=document.createElement("canvas");c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext("2d").drawImage(img,0,0);doc.addImage(c.toDataURL("image/jpeg",.88),"JPEG",14,34,31,40)}catch(e){}}doc.setTextColor(222,202,151);doc.setFontSize(7);doc.text("MEMBRO",53,33);doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(15);doc.text(doc.splitTextToSize($("#card-name").textContent,110),53,41);doc.setFont("helvetica","normal");doc.setFontSize(8);const lines=[["CPF",$("#card-cpf").textContent],["RG",$("#card-rg").textContent],["FILIAÇÃO",$("#card-affiliation").textContent],["NASCIMENTO",$("#card-birth-date").textContent],["NACIONALIDADE",$("#card-nationality").textContent],["NATURALIDADE",$("#card-naturalness").textContent],["ESTADO CIVIL",$("#card-marital-status").textContent],["MEMBRO DESDE",$("#card-member-since").textContent],["CARGO",$("#card-role").textContent]];let y=48;for(const [label,value] of lines){doc.setTextColor(210,221,212);doc.text(label,53,y);doc.setTextColor(255,255,255);doc.text(doc.splitTextToSize(value,73),80,y);y+=6}doc.setDrawColor(255,255,255);doc.line(14,105,166,105);doc.setFontSize(6);doc.setTextColor(222,202,151);doc.text("CNPJ: 17.935.940/0001-75",14,108);doc.text($("#branch-address")?.textContent||"Arroio São Gonçalo, N38 • São Paulo/SP",14,112);doc.text("ID "+currentUser.uid.slice(0,8).toUpperCase(),166,115,{align:"right"});doc.save("carteirinha-unidos-em-um.pdf")});
+async function ensureJsPdf(){
+  if(window.jspdf?.jsPDF)return;
+  const urls=["https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js","https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"];
+  for(const src of urls){
+    try{
+      await new Promise((resolve,reject)=>{
+        const script=document.createElement("script");
+        script.src=src;script.onload=resolve;script.onerror=()=>reject(new Error("Falha ao carregar "+src));
+        document.head.appendChild(script);
+      });
+      if(window.jspdf?.jsPDF)return;
+    }catch(error){console.warn(error)}
+  }
+  throw new Error("Não foi possível carregar o gerador de PDF.");
+}
+async function ensureHtml2Canvas(){
+  if(window.html2canvas)return;
+  const urls=["https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js","https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"];
+  for(const src of urls){
+    try{
+      await new Promise((resolve,reject)=>{
+        const script=document.createElement("script");
+        script.src=src;script.onload=resolve;script.onerror=()=>reject(new Error("Falha ao carregar "+src));
+        document.head.appendChild(script);
+      });
+      if(window.html2canvas)return;
+    }catch(error){console.warn(error)}
+  }
+  throw new Error("Não foi possível carregar o capturador visual da carteirinha.");
+}
+$("#download-pdf").addEventListener("click",async()=>{
+  const button=$("#download-pdf");
+  const original=button.textContent;
+  button.disabled=true;button.textContent="Preparando PDF...";
+  try{
+    await Promise.all([ensureJsPdf(),ensureHtml2Canvas()]);
+    if(document.fonts?.ready)await document.fonts.ready;
+    const card=$("#member-card");
+    const images=Array.from(card.querySelectorAll("img"));
+    await Promise.all(images.map(img=>{
+      if(!img.getAttribute("src")||img.complete)return Promise.resolve();
+      return new Promise(resolve=>{img.onload=resolve;img.onerror=resolve});
+    }));
+    const canvas=await window.html2canvas(card,{
+      scale:3,
+      backgroundColor:null,
+      useCORS:true,
+      allowTaint:false,
+      logging:false,
+      imageTimeout:20000,
+      scrollX:0,
+      scrollY:0
+    });
+    const image=canvas.toDataURL("image/png");
+    const {jsPDF}=window.jspdf;
+    const width=180;
+    const height=width*(canvas.height/canvas.width);
+    const pageHeight=Math.max(110,height+16);
+    const doc=new jsPDF({orientation:"landscape",unit:"mm",format:[190,pageHeight]});
+    doc.setFillColor(250,249,246);
+    doc.rect(0,0,190,pageHeight,"F");
+    doc.addImage(image,"PNG",5,8,width,height,undefined,"FAST");
+    doc.save("carteirinha-unidos-em-um.pdf");
+  }catch(error){
+    console.error("Erro ao gerar PDF fiel à carteirinha:",error);
+    alert("Não foi possível gerar o PDF com o visual completo. Vamos abrir a impressão do navegador; selecione 'Salvar como PDF' e habilite 'Gráficos de segundo plano'.");
+    window.print();
+  }finally{
+    button.disabled=false;button.textContent=original;
+  }
+});
