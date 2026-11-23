@@ -66,3 +66,16 @@
 
 /* Dados civis adicionais na carteirinha */
 .card-details .card-field{margin:3px 0;font-size:8px;gap:5px}.card-details .card-field span{min-width:78px;font-size:7px}.card-details .card-field b{font-size:8px}.card-details h3{font-size:18px;margin-bottom:7px}.card-main{min-height:225px}.member-card{min-height:345px}.field select{width:100%;height:43px;border:1px solid var(--line);border-radius:8px;padding:0 12px;background:#fff;color:var(--ink);font:inherit}@media(max-width:760px){.member-card{min-height:355px}.card-details .card-field span{min-width:72px}.card-details .card-field b{font-size:7px}.card-details h3{font-size:15px}}
+
+
+/* Impressão de contingência da carteirinha quando a biblioteca PDF estiver indisponível */
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body.dashboard-page{background:#fff!important}
+  .topbar,.welcome,.side-note,.card-actions,#settings-panel,.footer{display:none!important}
+  .dashboard{max-width:none!important;margin:0!important;padding:0!important}
+  .content-grid{display:block!important}
+  .card-area{width:100%!important;max-width:180mm!important;margin:0 auto!important}
+  .section-heading{display:none!important}
+  .member-card{width:100%!important;min-height:125mm!important;box-shadow:none!important;break-inside:avoid;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+}
