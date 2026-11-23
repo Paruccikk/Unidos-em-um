@@ -1,0 +1,1 @@
+import {auth} from "./firebase.js";import {signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";document.querySelector("#pending-logout").addEventListener("click",async()=>{await signOut(auth);location.replace("index.html")});
