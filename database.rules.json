@@ -2,17 +2,11 @@
   "rules": {
     ".read": false,
     ".write": false,
-    "admins": {
-      "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": false
-      }
-    },
     "members": {
-      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      ".read": "auth != null && root.child('members').child(auth.uid).child('admins').val() === true",
       "$uid": {
-        ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
-        ".write": "auth != null && (root.child('admins').child(auth.uid).val() === true || (auth.uid === $uid && ((!data.exists() && newData.child('status').val() === 'pendente' && newData.child('papel').val() === 'membro' && !newData.child('unidadeId').exists()) || (data.exists() && newData.child('status').val() === data.child('status').val() && newData.child('papel').val() === data.child('papel').val() && newData.child('unidadeId').val() === data.child('unidadeId').val() && newData.child('unidadeNome').val() === data.child('unidadeNome').val() && newData.child('pastorUnidade').val() === data.child('pastorUnidade').val()))))"
+        ".read": "auth != null && (auth.uid === $uid || root.child('members').child(auth.uid).child('admins').val() === true)",
+        ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || (auth.uid === $uid && ((!data.exists() && newData.child('status').val() === 'pendente' && newData.child('papel').val() === 'membro' && !newData.child('admins').exists() && !newData.child('unidadeId').exists()) || (data.exists() && newData.child('status').val() === data.child('status').val() && newData.child('papel').val() === data.child('papel').val() && newData.child('admins').val() === data.child('admins').val() && newData.child('unidadeId').val() === data.child('unidadeId').val() && newData.child('unidadeNome').val() === data.child('unidadeNome').val() && newData.child('pastorUnidade').val() === data.child('pastorUnidade').val()))))"
       }
     }
   }
