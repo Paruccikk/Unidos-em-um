@@ -1,3 +1,10 @@
+function authorizeDriveAccess() {
+  if (!DRIVE_FOLDER_ID) throw new Error("DRIVE_FOLDER_ID não configurado nas propriedades do script.");
+  const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+  Logger.log("Acesso autorizado à pasta: " + folder.getName());
+  return folder.getName();
+}
+
 function doGet() {
   return ContentService.createTextOutput("Google Drive uploader online").setMimeType(ContentService.MimeType.TEXT);
 }
