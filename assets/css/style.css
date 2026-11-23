@@ -203,3 +203,13 @@ a{color:var(--terracotta)}
 @media print{
   .card-fields-grid .card-field{border-color:#d4af3760}
 }
+
+
+/* Logo ampliado na carteirinha do membro */
+.member-card .card-logo{width:76px;height:66px;flex:0 0 76px}
+.member-card .card-logo .church-logo{max-width:76px;max-height:66px}
+.member-card .card-top{gap:15px}
+@media(max-width:760px){
+  .member-card .card-logo{width:62px;height:56px;flex-basis:62px}
+  .member-card .card-logo .church-logo{max-width:62px;max-height:56px}
+}
