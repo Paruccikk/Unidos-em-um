@@ -1,3 +1,6 @@
+function doGet() {
+  return ContentService.createTextOutput("Google Drive uploader online").setMimeType(ContentService.MimeType.TEXT);
+}
 const FIREBASE_API_KEY = PropertiesService.getScriptProperties().getProperty("FIREBASE_API_KEY");
 const FIREBASE_DB_URL = "https://unidos-em-um-default-rtdb.firebaseio.com";
 const DRIVE_FOLDER_ID = PropertiesService.getScriptProperties().getProperty("DRIVE_FOLDER_ID");
