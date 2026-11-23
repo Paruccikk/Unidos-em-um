@@ -1,6 +1,6 @@
 # Integração de fotos com Google Drive
 
-O Apps Script valida o token do Firebase Authentication e confirma que o perfil é aprovado antes de gravar a foto.
+O Apps Script valida o token do Firebase Authentication e confirma que o perfil é aprovado antes de gravar a foto. O envio usa um formulário em iframe para evitar bloqueio CORS do navegador.
 
 ## Configuração
 1. Acesse https://script.google.com/ e crie um projeto.
