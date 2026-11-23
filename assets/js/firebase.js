@@ -4,7 +4,7 @@ import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBQIyhUybgElbY_y6WQedl_R_WmkqQoWYu0",
+  apiKey: "AIzaSyC_L6Sn9OEdrUV_flX-Vr1P96XmOuhN1bI",
   authDomain: "unidos-em-um.firebaseapp.com",
   databaseURL: "https://unidos-em-um-default-rtdb.firebaseio.com",
   projectId: "unidos-em-um",
