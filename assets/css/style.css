@@ -213,3 +213,24 @@ a{color:var(--terracotta)}
   .member-card .card-logo{width:62px;height:56px;flex-basis:62px}
   .member-card .card-logo .church-logo{max-width:62px;max-height:56px}
 }
+
+/* Filtros rápidos e visualização da carteirinha pelo administrador */
+.approved-filter-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 17px}
+.filter-chip{border:1px solid #dfcdb6;background:#fffefa;color:#594536;border-radius:30px;padding:10px 16px;font-size:10px;font-weight:800;letter-spacing:.7px;cursor:pointer}
+.filter-chip:hover,.filter-chip.active{background:var(--terracotta);border-color:var(--terracotta);color:#fffaf4}
+.approved-member-card{justify-content:space-between}
+.member-view-btn{white-space:nowrap;font-size:10px;padding:9px 12px}
+.member-detail-dialog{width:min(680px,calc(100% - 28px));max-height:85vh;overflow:auto;border:1px solid #e9dfd2;border-radius:16px;padding:24px;background:#fffefa;color:var(--sepia);box-shadow:0 24px 80px #24180f40}
+.member-detail-dialog::backdrop{background:#21180fcc}
+.member-detail-dialog h2{font:700 23px 'Playfair Display';margin:0 0 18px}
+.member-detail-head{display:flex;align-items:center;gap:16px;padding:15px;background:#f7f0e5;border-radius:12px;margin-bottom:18px}
+.member-detail-head img{width:76px;height:90px;object-fit:cover;border-radius:8px;border:2px solid var(--gold)}
+.member-detail-head h3{font:700 19px 'Playfair Display';margin:0 0 5px}
+.member-detail-head p{font-size:12px;margin:0;color:var(--muted)}
+.member-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.member-detail-grid>div{padding:11px;border:1px solid #e9dfd2;border-radius:8px;min-width:0}
+.member-detail-grid strong,.member-detail-grid span{display:block;overflow-wrap:anywhere}
+.member-detail-grid strong{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--terracotta);margin-bottom:5px}
+.member-detail-grid span{font-size:12px}
+.member-detail-actions{display:flex;justify-content:flex-end;margin-top:18px}
+@media(max-width:600px){.approved-member-card{align-items:flex-start;flex-direction:column}.member-detail-grid{grid-template-columns:1fr}.member-detail-dialog{padding:17px}}
