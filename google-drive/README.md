@@ -11,8 +11,9 @@ O Apps Script valida o token do Firebase Authentication e confirma que o perfil 
 4. **Implantar → Nova implantação → Aplicativo da Web**.
 5. Executar como: **Eu**. Quem pode acessar: **Qualquer pessoa**.
 6. Autorize as permissões solicitadas.
-7. Copie a URL terminada em `/exec` e cole em `DRIVE_UPLOAD_URL` no arquivo `assets/js/painel.js`.
-8. Publique a atualização do site.
+7. Após qualquer alteração no `Code.gs`, abra **Implantar → Gerenciar implantações**, clique no lápis da implantação existente, selecione **Nova versão** e clique em **Implantar**. A URL `/exec` normalmente permanece a mesma.
+8. Teste a URL `/exec` no navegador: deve aparecer `Google Drive uploader online`.
+9. A URL `/exec` já está configurada em `assets/js/painel.js`; publique a atualização do site.
 
 ## Privacidade
 Para a foto aparecer na carteirinha sem login Google adicional, cada arquivo fica com acesso “qualquer pessoa com o link pode visualizar”. Quem obtiver o link poderá ver a imagem. A pasta não é compartilhada publicamente e os demais dados continuam protegidos no Realtime Database.
