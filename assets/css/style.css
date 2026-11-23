@@ -79,3 +79,109 @@
   .section-heading{display:none!important}
   .member-card{width:100%!important;min-height:125mm!important;box-shadow:none!important;break-inside:avoid;print-color-adjust:exact;-webkit-print-color-adjust:exact}
 }
+
+
+/* =========================================================
+   IDENTIDADE VISUAL — UNIDOS EM UM
+   Terracota, trigo, sépia e creme
+   ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700;800&display=swap');
+:root{
+  --green:#173d32;
+  --green2:#245746;
+  --gold:#d4af37;
+  --ink:#4a3728;
+  --muted:#81766d;
+  --line:#e9dfd2;
+  --bg:#f7f3eb;
+  --terracotta:#a52a2a;
+  --terracotta2:#c0392b;
+  --sepia:#4a3728;
+  --cream:#faf9f6;
+  --steel:#929292;
+  --fire:#ff6a00;
+}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}
+a{color:var(--terracotta)}
+.eyebrow{color:var(--terracotta);letter-spacing:2.1px}
+.muted{color:#81766d}
+.topbar{background:rgba(250,249,246,.96);border-bottom:1px solid #e7ddcf;box-shadow:0 4px 18px #4a372808;backdrop-filter:blur(12px)}
+.brand-small{color:var(--terracotta)}
+.brand-small b#brand-title{color:var(--sepia)}
+.main-nav a{color:#78695d}
+.main-nav a:hover,.main-nav a[aria-current="page"]{background:#f2e8dc;color:var(--terracotta)}
+.outline-btn,.icon-btn{border-color:#d9c8b5;color:var(--sepia);background:#fffdf9}
+.outline-btn:hover,.icon-btn:hover{border-color:var(--gold);background:#fbf5e8}
+.primary-btn{background:var(--terracotta);color:#fffaf4;box-shadow:0 5px 13px #a52a2a20}
+.primary-btn:hover{background:var(--terracotta2);box-shadow:0 8px 18px #a52a2a2c}
+.text-btn{color:var(--terracotta)}
+.auth-page{background:radial-gradient(circle at 12% 12%,#ead8c3 0,transparent 34%),radial-gradient(circle at 88% 88%,#eadfc8 0,transparent 30%),#f7f3eb}
+.auth-shell{background:var(--cream);border:1px solid #e9dfd2;border-radius:24px;box-shadow:0 28px 90px #4a37281a}
+.brand-panel{background:radial-gradient(circle at 80% 18%,#78553b 0,transparent 38%),linear-gradient(145deg,#38291f,#5c4033 62%,#4a3728);color:#faf4e9}
+.brand-panel:after{border-color:#d4af3730;box-shadow:0 0 0 35px #d4af370c,0 0 0 70px #d4af3708}
+.brand-panel .eyebrow{color:#e0bd58}
+.brand-panel h1{color:#faf4e9;text-shadow:0 3px 18px #1d120b35}
+.brand-copy{color:#eadfd0}
+.brand-verse{border-color:var(--gold);color:#f3e4bd}
+.brand-verse small{color:#d8bd76}
+.auth-card{background:#fffefa}
+.auth-card h2,.dashboard h1,.section-heading h2,.admin-heading h1,.admin-toolbar h2{color:var(--sepia)}
+.auth-card input,.field input,.auth-card select,.field select{background:#fffefa;border-color:#e4d8c9;color:var(--sepia)}
+.auth-card input:focus,.field input:focus,.auth-card select:focus,.field select:focus{border-color:var(--terracotta);box-shadow:0 0 0 3px #a52a2a12}
+.auth-divider{background:#e9dfd2}
+.auth-divider span{background:#fffefa;color:#9b8b7d}
+.mobile-brand span{color:var(--terracotta)}
+.dashboard{margin-top:46px}
+.welcome{margin-bottom:32px}
+.card-area,.side-note,.settings-panel,.admin-panel,.admin-stat,.pending-card{background:#fffefa;border-color:#e9dfd2;box-shadow:0 8px 28px #4a372809}
+.card-area,.settings-panel{border-radius:17px}
+.member-card{background:radial-gradient(circle at 90% 10%,#79563c 0,transparent 36%),linear-gradient(130deg,#3c2b21,#5c4033 60%,#4a3728);border:1px solid #d4af3760;box-shadow:0 18px 38px #4a37282b}
+.member-card:before{border-color:#d4af3730;box-shadow:0 0 0 25px #d4af370c,0 0 0 50px #d4af3708}
+.card-top{border-color:#d4af3760}
+.card-church small,.card-label,.card-field span{color:#e6cf8d}
+.card-seal{color:var(--gold)}
+.photo-frame{border-color:var(--gold);background:#faf9f618}
+.card-footer{border-color:#d4af3760;color:#eadfd0}
+.card-footer span:last-child{color:#e6c75e}
+.live-pill{background:#f6edda;color:#8a641b}
+.live-pill i{background:#c59b31}
+.side-note{border-radius:16px}
+.note-icon{background:#f5ead8;color:var(--terracotta);border:1px solid #ead8bd}
+.side-note h3{color:var(--sepia)}
+.note-divider{background:#e9dfd2}
+.note-row b{color:var(--terracotta)}
+.progress{background:#eee6da}
+.progress span{background:linear-gradient(90deg,#d4af37,#b98b28)}
+.photo-upload{background:#faf6ef;border-color:#dfcdb6}
+.upload-preview{background:#f0e7da;color:#8e7b68}
+.upload-btn{background:#fffefa;border-color:#dfd0bd;color:var(--sepia)}
+.field label,.auth-card form label{color:#594536}
+.admin-page{background:var(--bg)}
+.admin-main{margin-top:38px}
+.admin-stat strong{color:var(--terracotta)}
+.admin-stat span{color:var(--muted)}
+.pending-card{border-radius:13px}
+.pending-actions select,.admin-filter{background:#fffefa;border-color:#e4d8c9;color:var(--sepia)}
+.status-pill{background:#f8efd9;color:#87631b}
+.admin-empty{background:#fffefa;border-color:#e5d5c1;color:#81766d}
+.admin-unit,.member-unit{color:#d8bd76}
+.approved-member-card{background:#fbf7f0;border-color:#e9dfd2}
+.approved-member-card h3{color:var(--sepia)}
+.approved-unit{background:#f4ead8;color:var(--terracotta)}
+.footer{color:#9a8978}
+.footer strong{color:var(--terracotta)}
+.footer span{color:#b38b2e}
+.message{color:#a52a2a}
+.message.success{color:#39734c}
+@media(max-width:760px){
+  .dashboard{margin-top:27px}
+  .auth-page{padding:16px}
+  .auth-shell{border-radius:18px}
+  .auth-card{background:#fffefa}
+  .topbar{background:#fffefa}
+  .main-nav a[aria-current="page"]{background:#f4e9dc}
+  .member-card{box-shadow:0 12px 25px #4a372824}
+}
+@media print{
+  .member-card{background:#4a3728!important;border:1px solid #d4af37!important}
+}
