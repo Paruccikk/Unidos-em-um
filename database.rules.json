@@ -3,11 +3,15 @@
     ".read": false,
     ".write": false,
     "members": {
-      ".read": "auth != null && root.child('members').child(auth.uid).child('admins').val() === true",
+      ".read": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin')",
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || root.child('members').child(auth.uid).child('admins').val() === true)",
-        ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || (auth.uid === $uid && ((!data.exists() && newData.child('status').val() === 'pendente' && newData.child('papel').val() === 'membro' && !newData.child('admins').exists() && !newData.child('unidadeId').exists()) || (data.exists() && newData.child('status').val() === data.child('status').val() && newData.child('papel').val() === data.child('papel').val() && newData.child('admins').val() === data.child('admins').val() && newData.child('unidadeId').val() === data.child('unidadeId').val() && newData.child('unidadeNome').val() === data.child('unidadeNome').val() && newData.child('pastorUnidade').val() === data.child('pastorUnidade').val()))))"
+        ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || (auth.uid === $uid && ((!data.exists() && newData.child('status').val() === 'pendente' && (newData.child('papel').val() === 'membro' || newData.child('papel').val() === 'usuario') && !newData.child('admins').exists() && !newData.child('unidadeId').exists()) || (data.exists() && newData.child('status').val() === data.child('status').val() && newData.child('papel').val() === data.child('papel').val() && newData.child('admins').val() === data.child('admins').val() && newData.child('unidadeId').val() === data.child('unidadeId').val() && newData.child('unidadeNome').val() === data.child('unidadeNome').val() && newData.child('pastorUnidade').val() === data.child('pastorUnidade').val())))"
       }
+    },
+    "events": {
+      ".read": "auth != null && (root.child('members').child(auth.uid).child('status').val() === 'aprovado' || root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
+      ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')"
     }
   }
 }
