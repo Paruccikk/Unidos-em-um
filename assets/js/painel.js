@@ -60,7 +60,7 @@ function setPhoto(url){
   const placeholder=$("#photo-placeholder"),previewPlaceholder=$("#form-photo-placeholder");
 
   const extractDriveId=value=>{
-    const match=String(value||"").match(/(?:[?&]id=|\\/d\\/)([a-zA-Z0-9_-]{20,})/);
+    const match=String(value||"").match(/(?:[?&]id=|[/]d[/])([a-zA-Z0-9_-]{20,})/);
     return match?match[1]:null;
   };
 
