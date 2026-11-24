@@ -76,7 +76,8 @@ async function previewDaily(){
   const members=membersSnap.val()||{},rawEvents=eventsSnap.val()||{};
   const events=Object.entries(rawEvents).map(([id,e])=>({id,...e}));
   const verse=verses[Math.floor(new Date(today+"T12:00:00-03:00").getTime()/86400000)%verses.length];
-  const previews=[];\n  let approvedCount=0,optedInCount=0,phoneCount=0;
+  const previews=[];
+  let approvedCount=0,optedInCount=0,phoneCount=0;
   for(const [uid,m] of Object.entries(members)){
    if(m.status==="aprovado"||m.admins===true)approvedCount++;
    if(m.status!=="aprovado"||m.notificacoesWhatsapp!==true)continue;
