@@ -244,3 +244,80 @@ a{color:var(--terracotta)}
 .day-events{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.day-event-card{border:1px solid #eadfd2;border-radius:11px;padding:16px;background:#fffcf7;min-width:0}.day-event-meta{font-size:10px;color:var(--terracotta);font-weight:800;letter-spacing:.4px}.day-event-card h3{font:700 17px 'Playfair Display';margin:8px 0;color:var(--sepia)}.day-event-card p{font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap}.day-event-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.day-event-actions button{font-size:10px;padding:8px 11px}.danger-btn{color:#a52a2a!important;border-color:#d9b5ad!important}
 .event-editor form{max-width:900px}.event-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}.event-description-field{grid-column:1/-1}.event-form-grid textarea{resize:vertical}.event-warning{color:#936719;background:#fbf3df;border-radius:8px;padding:10px 12px;font-size:11px;line-height:1.5;min-height:0}.event-warning:empty{display:none}.event-editor .form-actions{margin-top:12px}
 @media(max-width:900px){.annual-calendar{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.events-main{margin:24px auto;padding:0 13px}.events-heading,.calendar-toolbar{align-items:stretch;flex-direction:column}.events-filters{min-width:0}.annual-calendar{grid-template-columns:1fr}.month-grid{gap:5px}.calendar-day{font-size:12px}.day-events{grid-template-columns:1fr}.event-form-grid{grid-template-columns:1fr}.event-description-field{grid-column:auto}.calendar-panel,.day-panel,.event-editor{padding:16px}.year-controls{justify-content:flex-start}}
+
+/* RESPONSIVIDADE MOBILE — ajustes globais */
+html{width:100%;max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
+body{width:100%;max-width:100%;overflow-x:hidden}
+img,svg,video,canvas{max-width:100%}
+button,input,select,textarea{max-width:100%}
+button,.primary-btn,.outline-btn,.icon-btn{touch-action:manipulation}
+input,select,textarea{font-size:16px}
+.topbar{min-width:0}.brand-small,.main-nav{min-width:0}
+.dashboard,.admin-main,.events-main{width:100%;min-width:0}
+.card-area,.side-note,.settings-panel,.admin-panel,.admin-stat,.pending-card,.calendar-panel,.day-panel,.event-editor,.upcoming-panel{min-width:0}
+@media(max-width:900px){
+.topbar{height:auto;min-height:64px;flex-wrap:wrap;gap:8px 12px;padding:9px 16px}
+.brand-small{flex:1 1 auto}.top-actions{flex:0 0 auto}
+.main-nav{order:3;flex:1 0 100%;width:100%;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:thin;padding:2px 0 4px}
+.main-nav a{flex:0 0 auto}
+}
+@media(max-width:760px){
+.auth-page{min-height:100svh;padding:14px;display:flex;align-items:center;justify-content:center}
+.auth-shell{width:100%;max-width:480px;min-height:0;border-radius:18px}
+.auth-card{width:100%;padding:28px 20px}.auth-card h2{font-size:25px;line-height:1.2}
+.auth-card>.muted{margin-bottom:22px}.mobile-brand{margin-bottom:24px}.privacy-note{margin-top:24px}
+.dashboard{margin:22px auto;padding:0 12px}.welcome{margin-bottom:20px}
+.welcome h1{font-size:26px;line-height:1.2}.welcome .muted{font-size:12px}
+.settings-toggle{width:100%;justify-content:center}.content-grid{gap:14px}
+.card-area,.settings-panel{padding:14px}.section-heading{gap:10px;align-items:flex-start}
+.section-heading h2{font-size:18px;line-height:1.25}
+.member-card{width:100%;padding:15px 12px 12px;min-height:0}
+.card-top{gap:9px}.member-card .card-logo{width:48px;height:46px;flex-basis:48px}
+.member-card .card-logo .church-logo{max-width:48px;max-height:46px}
+.card-church{font-size:8px;letter-spacing:.7px}.card-church small{font-size:7px;letter-spacing:.7px}
+.card-seal{font-size:20px}.card-main{gap:10px;padding:13px 0;min-height:0}
+.photo-frame{width:74px;height:100px}.card-details h3{font-size:14px;line-height:1.2;overflow-wrap:anywhere}
+.card-fields-grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:7px;row-gap:5px}
+.card-fields-grid .card-field b{font-size:7px!important;overflow-wrap:anywhere}
+.card-fields-grid .card-field span{font-size:6px!important}
+.card-footer{gap:6px;font-size:6px;overflow-wrap:anywhere}.card-footer span:last-child{flex:0 0 auto}
+.card-actions{width:100%;margin-top:13px}.card-actions .primary-btn{width:100%}
+.side-note{padding:18px}.form-grid,.event-form-grid{grid-template-columns:minmax(0,1fr)}
+.event-description-field{grid-column:auto}
+.form-actions{flex-direction:column-reverse;align-items:stretch}.form-actions button{width:100%;min-height:44px}
+.photo-upload{align-items:flex-start;flex-wrap:wrap}
+.admin-main,.events-main{margin:20px auto;padding:0 12px}
+.admin-heading h1,.events-heading h1{font-size:27px;line-height:1.2}
+.admin-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.admin-stat{padding:11px 8px}.admin-stat span{font-size:9px;line-height:1.35}.admin-stat strong{font-size:20px}
+.admin-panel{padding:14px}.admin-toolbar{gap:10px}.admin-toolbar h2{font-size:18px;line-height:1.25}
+.pending-card{padding:14px}.pending-actions{min-width:0}
+.approved-filter-buttons,.unit-filter-buttons{width:100%;gap:6px}
+.approved-filter-buttons .filter-chip,.unit-filter-buttons .filter-chip{flex:1 1 auto;padding:9px 10px;font-size:9px}
+.approved-member-card{width:100%;min-width:0}.approved-member-card>div{min-width:0;overflow-wrap:anywhere}
+.member-view-btn{white-space:normal}.access-user-row{padding:12px}
+.events-heading,.calendar-toolbar{gap:12px;margin-bottom:16px}.events-filters{width:100%}
+.upcoming-panel,.calendar-panel,.day-panel,.event-editor{padding:14px;margin:14px 0;border-radius:13px}
+.upcoming-toolbar h2,.calendar-toolbar h2,.day-panel h2,.event-editor h2{font-size:19px}
+.upcoming-list,.day-events{grid-template-columns:minmax(0,1fr)}
+.upcoming-card,.day-event-card{width:100%;min-width:0}.upcoming-content,.day-event-card{overflow-wrap:anywhere}
+.unit-filter-buttons{justify-content:flex-start}.calendar-toolbar{align-items:stretch}
+.year-controls{justify-content:space-between}.year-controls button{min-width:42px;min-height:42px}
+.calendar-legend{gap:9px 14px;font-size:10px}
+.annual-calendar{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.month-card{padding:8px}.month-card h3{font-size:13px}.month-grid{gap:2px}
+.weekday-head{font-size:8px;padding:3px 0}.calendar-day{font-size:10px;min-height:0}.day-empty{min-height:0}
+.event-form-grid input,.event-form-grid select,.event-form-grid textarea{min-height:44px}
+.event-form-grid textarea{min-height:96px}
+.footer{padding:18px 12px 24px;font-size:9px;line-height:1.8;overflow-wrap:anywhere}
+.member-detail-dialog{width:calc(100% - 20px);max-height:90svh;padding:15px}
+}
+@media(max-width:390px){
+.topbar{padding-left:10px;padding-right:10px}.brand-small .church-logo{width:32px;height:32px}
+.brand-small b#brand-title{font-size:7px;max-width:145px}.main-nav a{font-size:9px;padding:8px 6px}
+.top-actions .outline-btn{padding:8px 9px;font-size:11px}
+.admin-stats{grid-template-columns:1fr}.admin-stat{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.annual-calendar{grid-template-columns:1fr}.card-main{gap:8px}
+.photo-frame{width:65px;height:88px}.card-fields-grid{column-gap:5px}.card-footer{font-size:5.5px}
+}
+@media(hover:none){.primary-btn:hover,.outline-btn:hover,.filter-chip:hover{transform:none}}
