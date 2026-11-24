@@ -11,5 +11,15 @@
 <div id="wa-qr-wrap" class="hidden" style="padding:20px"><img id="wa-qr" alt="QR Code do WhatsApp" style="width:min(300px,100%);height:auto;background:white;padding:10px;border-radius:12px"><p class="tiny">O QR Code expira. Se não conectar, gere outro.</p></div>
 <div class="form-actions" style="justify-content:center"><button id="wa-connect" class="primary-btn" type="button">Gerar QR Code</button><button id="wa-refresh" class="outline-btn" type="button">Atualizar status</button><button id="wa-disconnect" class="outline-btn" type="button">Desconectar</button></div>
 <p id="wa-error" class="message"></p><p class="tiny">A sessão é temporária no Render. Reinícios ou suspensão do serviço podem exigir uma nova leitura do QR Code. Esta integração usa uma biblioteca não oficial do WhatsApp Web.</p>
+</section>
+<section class="admin-panel" style="max-width:760px;margin:24px auto;text-align:left">
+  <h2>Disparo diário de versículo e eventos</h2>
+  <p class="muted">Envia uma mensagem para cada membro aprovado que cadastrou o WhatsApp e ativou as notificações. Cada unidade recebe apenas os próprios eventos de hoje. Se não houver eventos, a mensagem terá somente o versículo.</p>
+  <div class="form-actions" style="align-items:center">
+    <button id="wa-daily-preview" class="outline-btn" type="button">Conferir destinatários</button>
+    <button id="wa-daily-send" class="primary-btn" type="button" disabled>Disparar mensagens de hoje</button>
+  </div>
+  <div id="wa-daily-summary" class="message" role="status">Conecte o WhatsApp e confira os destinatários antes do envio.</div>
+  <div id="wa-daily-preview-list" class="tiny" aria-live="polite"></div>
 </section></main><footer class="footer">IGREJA PENTECOSTAL UNIDOS EM UM</footer>
-<script type="module" src="assets/js/whatsapp.js?v=20261124-whatsapp"></script></body></html>
+<script type="module" src="assets/js/whatsapp.js?v=20261124-daily-v1"></script></body></html>
