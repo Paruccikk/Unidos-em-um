@@ -87,13 +87,20 @@ $("#document-form").addEventListener("submit",async e=>{
   message("Preparando arquivo para o Google Drive... 0%");
   const base64=await fileToBase64(file,p=>message("Preparando arquivo... "+p+"%"));
   message("Enviando arquivo ao Google Drive... 40%");
-  const idToken=await user.getIdToken(true);
+  const idToken=await user.getIdToken();
   const result=await uploadToDrive({documentUpload:true,idToken,base64,mimeType:file.type,fileName:file.name});
   message("Arquivo recebido. Salvando na biblioteca... 90%");
   const record=push(ref(db,"documents"));
   await set(record,{titulo:$("#document-title").value.trim(),descricao:$("#document-description").value.trim(),url:result.url,fileId:result.fileId,nomeArquivo:file.name,tipo:file.type,tamanho:file.size,ativo:true,criadoPor:user.uid,criadoEm:Date.now(),armazenamento:"google-drive"});
   form.reset();message("Documento enviado ao Google Drive e publicado na biblioteca.",true);await loadDocuments();
- }catch(err){console.error(err);message(err.message||"Não foi possível publicar o documento. Confira a implantação do Apps Script e as permissões do Firebase.")}
+ }catch(err){
+  console.error("Falha no upload do documento:",err);
+  const code=err?.code||"";
+  const detail=code==="auth/network-request-failed"
+    ? "O Firebase não conseguiu renovar/obter sua sessão pela rede. Tente novamente; se persistir, desative temporariamente bloqueadores de requisições e verifique se securetoken.googleapis.com e identitytoolkit.googleapis.com estão acessíveis."
+    : err.message||"Não foi possível publicar o documento. Confira a implantação do Apps Script e as permissões do Firebase.";
+  message(detail);
+}
  finally{btn.disabled=false}
 });
 $("#refresh-documents").addEventListener("click",()=>loadDocuments().catch(e=>console.error(e)));
