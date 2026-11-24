@@ -136,12 +136,12 @@ app.post("/api/whatsapp/daily/send",requireOwner,async(req,res)=>{
     if (!connected || !sock) return res.status(409).json({error:"WhatsApp não está conectado. Conecte antes de disparar as mensagens."});
     const date = String(req.body?.date || "");
     const messages = req.body?.messages;
-    if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date) || !Array.isArray(messages) || messages.length < 1 || messages.length > 1000) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Array.isArray(messages) || messages.length < 1 || messages.length > 1000) {
       return res.status(400).json({error:"Lista de mensagens inválida ou vazia."});
     }
     for (const item of messages) {
-      const digits = String(item?.phone || "").replace(/\\D/g,"");
-      if (!/^55\\d{10,11}$/.test(digits) || typeof item?.text !== "string" || !item.text.trim() || item.text.length > 4000) {
+      const digits = String(item?.phone || "").replace(/\D/g,"");
+      if (!/^55\d{10,11}$/.test(digits) || typeof item?.text !== "string" || !item.text.trim() || item.text.length > 4000) {
         return res.status(400).json({error:"Foi encontrado um telefone ou conteúdo inválido. Nenhuma mensagem foi enviada."});
       }
     }
@@ -149,12 +149,12 @@ app.post("/api/whatsapp/daily/send",requireOwner,async(req,res)=>{
     const failures = [];
     for (const item of messages) {
       try {
-        const digits = String(item.phone).replace(/\\D/g,"");
+        const digits = String(item.phone).replace(/\D/g,"");
         await sock.sendMessage(digits+"@s.whatsapp.net",{text:item.text});
         sent += 1;
         await new Promise(resolve=>setTimeout(resolve,900));
       } catch (error) {
-        failures.push({phone:String(item.phone).replace(/\\D/g,"").slice(-4),error:error?.message||"Falha no envio"});
+        failures.push({phone:String(item.phone).replace(/\D/g,"").slice(-4),error:error?.message||"Falha no envio"});
       }
     }
     res.json({ok:true,date,sent,failed:failures.length,failures:failures.slice(0,20)});
