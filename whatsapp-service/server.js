@@ -131,6 +131,8 @@ async function startWhatsApp() {
 }
 
 
+function normalizeBrazilPhone(value) { let digits=String(value||"").replace(/\D/g,""); if(!digits)return null; if(digits.startsWith("00"))digits=digits.slice(2); if((digits.length===12||digits.length===13)&&digits.startsWith("55"))digits=digits.slice(2); if((digits.length===11||digits.length===12)&&digits.startsWith("0"))digits=digits.slice(1); return digits.length===10||digits.length===11?"55"+digits:null; }
+
 app.post("/api/whatsapp/daily/send",requireOwner,async(req,res)=>{
   try {
     if (!connected || !sock) return res.status(409).json({error:"WhatsApp não está conectado. Conecte antes de disparar as mensagens."});
@@ -139,22 +141,21 @@ app.post("/api/whatsapp/daily/send",requireOwner,async(req,res)=>{
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Array.isArray(messages) || messages.length < 1 || messages.length > 1000) {
       return res.status(400).json({error:"Lista de mensagens inválida ou vazia."});
     }
-    for (const item of messages) {
-      const digits = String(item?.phone || "").replace(/\D/g,"");
-      if (!/^55\d{10,11}$/.test(digits) || typeof item?.text !== "string" || !item.text.trim() || item.text.length > 4000) {
+    const normalizedMessages = messages.map(item => ({...item, phone:normalizeBrazilPhone(item?.phone)}));
+    for (const item of normalizedMessages) {
+      if (!item.phone || typeof item?.text !== "string" || !item.text.trim() || item.text.length > 4000) {
         return res.status(400).json({error:"Foi encontrado um telefone ou conteúdo inválido. Nenhuma mensagem foi enviada."});
       }
     }
     let sent = 0;
     const failures = [];
-    for (const item of messages) {
+    for (const item of normalizedMessages) {
       try {
-        const digits = String(item.phone).replace(/\D/g,"");
-        await sock.sendMessage(digits+"@s.whatsapp.net",{text:item.text});
+        await sock.sendMessage(item.phone+"@s.whatsapp.net",{text:item.text});
         sent += 1;
         await new Promise(resolve=>setTimeout(resolve,900));
       } catch (error) {
-        failures.push({phone:String(item.phone).replace(/\D/g,"").slice(-4),error:error?.message||"Falha no envio"});
+        failures.push({phone:String(item.phone||"").slice(-4),error:error?.message||"Falha no envio"});
       }
     }
     res.json({ok:true,date,sent,failed:failures.length,failures:failures.slice(0,20)});
