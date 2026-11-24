@@ -1,7 +1,7 @@
 import {auth,db} from "./firebase.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {ref,get,onValue,push,set,update,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-const $=s=>document.querySelector(s),units={sede:"Sede",filial2:"Filial 2",filial3:"Filial 3"};
+const $=s=>document.querySelector(s),units={sede:"Sede",filial2:"Filial 1",filial3:"Filial 2"};
 let selectedUnit="todos";
 let currentUser=null,canEdit=false,events={},selectedDate="",year=new Date().getFullYear(),unsubscribe=null;
 const todayISO=()=>dateISO(new Date()),dateISO=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");
