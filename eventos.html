@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102d26">
 <title>Calendários e Eventos | Unidos em Um</title>
-<link rel="stylesheet" href="assets/css/style.css?v=20261124-agenda-cards">
+<link rel="stylesheet" href="assets/css/style.css?v=20261124-agenda-organizada">
 <style>
 .upcoming-panel{background:#fffefa;border:1px solid var(--line);border-radius:16px;padding:22px;margin:20px 0;box-shadow:0 8px 28px #4a372809}
 .upcoming-toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px}
@@ -22,6 +22,10 @@
 .calendar-panel{margin-top:26px}
 @media(max-width:700px){.upcoming-panel{padding:16px}.upcoming-toolbar{align-items:stretch;flex-direction:column}.upcoming-list{grid-template-columns:1fr}.upcoming-card{padding:13px}.upcoming-date{flex-basis:58px}.upcoming-content h3{font-size:15px}}
 </style>
+
+<style>
+.unit-filter-buttons{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}.unit-filter-buttons .filter-chip{border:1px solid #dfcdb6;background:#fffefa;color:#594536;border-radius:30px;padding:10px 16px;font-size:10px;font-weight:800;letter-spacing:.7px;cursor:pointer}.unit-filter-buttons .filter-chip:hover,.unit-filter-buttons .filter-chip.active{background:var(--terracotta);border-color:var(--terracotta);color:#fffaf4}.upcoming-section-title{font:700 17px 'Playfair Display';color:var(--sepia);margin:22px 0 11px;padding-bottom:8px;border-bottom:1px solid #eadfd2}.upcoming-section-title:first-child{margin-top:4px}@media(max-width:700px){.unit-filter-buttons{justify-content:flex-start}}
+</style>
 </head>
 <body class="admin-page events-page">
 <header class="topbar">
@@ -32,12 +36,12 @@
 <main class="events-main">
 <section class="events-heading">
 <div><p class="eyebrow">AGENDA DAS CONGREGAÇÕES</p><h1>Calendários e Eventos</h1><p class="muted">A programação da Sede e das Filiais em um só lugar.</p></div>
-<div class="events-filters"><label for="unit-filter">Exibir programação</label><select id="unit-filter"><option value="todos">Todas as igrejas</option><option value="sede">Sede</option><option value="filial2">Filial 2</option><option value="filial3">Filial 3</option></select></div>
+<div class="events-filters"><label>Exibir programação</label><div id="unit-filter-buttons" class="unit-filter-buttons" role="group" aria-label="Filtrar por igreja"><button type="button" class="filter-chip active" data-unit-filter="todos" aria-pressed="true">TODAS</button><button type="button" class="filter-chip" data-unit-filter="sede" aria-pressed="false">SEDE</button><button type="button" class="filter-chip" data-unit-filter="filial2" aria-pressed="false">FILIAL 2</button><button type="button" class="filter-chip" data-unit-filter="filial3" aria-pressed="false">FILIAL 3</button></div></div>
 </section>
 
 <section class="upcoming-panel" id="upcoming-panel">
 <div class="upcoming-toolbar"><div><p class="eyebrow">FIQUE POR DENTRO</p><h2>Próximos eventos</h2><p class="muted">Veja a programação futura e os detalhes de cada encontro.</p></div></div>
-<div id="upcoming-events" class="upcoming-list"><div class="admin-empty">Carregando eventos...</div></div>
+<h3 class="upcoming-section-title">Eventos fixos</h3><div id="fixed-events" class="upcoming-list"><div class="admin-empty">Carregando eventos...</div></div><h3 class="upcoming-section-title">Eventos avulsos</h3><div id="oneoff-events" class="upcoming-list"><div class="admin-empty">Carregando eventos...</div></div>
 </section>
 
 <section id="event-editor" class="event-editor hidden">
@@ -63,5 +67,5 @@
 </section>
 </main>
 <footer class="footer">IGREJA PENTECOSTAL UNIDOS EM UM • “Há, pois, muitos membros, mas um só corpo.” — 1 Coríntios 12:20</footer>
-<script type="module" src="assets/js/navigation.js?v=20261124-nav"></script><script type="module" src="assets/js/eventos.js?v=20261124-agenda-cards"></script>
+<script type="module" src="assets/js/navigation.js?v=20261124-nav"></script><script type="module" src="assets/js/eventos.js?v=20261124-agenda-organizada"></script>
 </body></html>
