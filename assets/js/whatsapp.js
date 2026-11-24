@@ -2,7 +2,7 @@ import {auth,db} from "./firebase.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {ref,get} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const OWNER="danielparuccikk@gmail.com";
-const API="https://unidos-em-um-whatsapp.onrender.com";
+const API="https://unidos-em-um-whatsapp-qr.onrender.com";
 const $=s=>document.querySelector(s);
 let currentUser=null,polling=null;
 function show(text,ok=false){$("#wa-status").textContent=text;$("#wa-status").className="message"+(ok?" success":"")}
