@@ -10,24 +10,28 @@ Portal responsivo de membros com autenticação Firebase, perfil pessoal, foto e
 - Foto no Firebase Storage em `member-photos/{uid}/profile`.
 - Download da carteirinha em PDF com o visual do cartão.
 - Biblioteca de documentos PDF e imagens para membros aprovados.
-- Gestão administrativa de carteirinhas: edição, criação de cadastro presencial e criação de conta Firebase.
+- Gestão administrativa de carteirinhas e cadastros.
 - Layout adaptado para celular e computador.
 
-## Configuração Firebase (obrigatória)
+## Configuração Firebase
 1. Authentication → Sign-in method: habilite **E-mail/senha**.
-2. Realtime Database → Regras: publique o conteúdo atualizado de `database.rules.json`, incluindo `members`, `events` e `documents`.
-3. Firebase Storage: ative/crie o bucket do projeto; em Rules, publique `storage.rules`.
-4. Confirme em `assets/js/firebase.js` se o bucket corresponde ao exibido no console Firebase.
-5. Para cadastro aberto, mantenha habilitada a criação de usuários por e-mail/senha. Se somente a secretaria cadastrar membros, remova o formulário de criação de conta e crie os usuários pelo Firebase Authentication.
+2. Realtime Database → Regras: publique `database.rules.json`, incluindo `members`, `events` e `documents`.
+3. O Firebase Storage continua sendo usado para recursos que já dependem dele, como fotos quando aplicável. A biblioteca de documentos usa Google Drive.
+4. Confirme em `assets/js/firebase.js` as configurações do projeto.
 
-## Documentos e integrações
-- A conta administradora autorizada publica documentos pela página `documentos.html`; o upload de PDF/imagem usa Firebase Storage com envio retomável e indicador de progresso (até 15 MB).
-- Após atualizar `storage.rules`, publique as regras em Firebase Console → Storage → Rules. A regra atual limita a publicação à conta `danielparuccikk@gmail.com`; os arquivos ficam disponíveis para usuários autenticados.
-- A foto da carteirinha é otimizada e incorporada ao perfil como imagem JPEG reduzida, permitindo que o PDF exportado inclua a foto sem depender do CORS do Google Drive. Se a foto já estava cadastrada antes desta atualização, selecione-a novamente uma vez em Configurações e salve para gerar a versão incorporada.
-- A aba `whatsapp.html` é restrita à conta `danielparuccikk@gmail.com`. O serviço `whatsapp-service/` gera QR Code e mantém a conexão em armazenamento temporário do Render; após reinícios ou suspensão pode ser necessário reconectar. A biblioteca Baileys é uma integração não oficial do WhatsApp Web; o envio automático de avisos ainda não foi ativado.
+## Documentos e Google Drive
+- A página `documentos.html` envia PDFs e imagens diretamente ao Google Drive por meio do Apps Script, com limite de 15 MB.
+- Os metadados e links ficam no Realtime Database em `documents`.
+- A pasta exclusiva de documentos é `1cJl0T85pWo26wAJ_3ajwb4DU8lzAwxHO`; a pasta de fotos dos membros permanece separada.
+- No Google Drive, compartilhe a pasta de documentos como **Qualquer pessoa com o link — Leitor** para permitir que membros aprovados abram os arquivos.
+- Para ativar: copie o conteúdo atualizado de `google-drive/Code.gs` para o projeto Apps Script, execute `authorizeDriveAccess()` e publique uma nova versão do Aplicativo da Web.
+- Mantenha as propriedades `FIREBASE_API_KEY` e `DRIVE_FOLDER_ID` existentes no Apps Script. O ID da pasta de documentos já está configurado como fallback em `DRIVE_DOCUMENTS_FOLDER_ID`.
+
+## Foto e carteirinha
+A foto da carteirinha é otimizada e incorporada ao perfil como imagem JPEG reduzida, permitindo que o PDF exportado inclua a foto sem depender do CORS do Google Drive.
+
+## WhatsApp
+A aba `whatsapp.html` é restrita à conta autorizada. O serviço `whatsapp-service/` gera QR Code e mantém a conexão em armazenamento temporário do Render; após reinícios ou suspensão pode ser necessário reconectar. Baileys é uma integração não oficial do WhatsApp Web. O envio automático de avisos ainda depende da implementação e configuração do serviço.
 
 ## Segurança
-CPF e RG são dados pessoais. As regras fornecidas permitem que cada usuário leia e altere somente o próprio registro e sua própria foto. Não publique regras abertas de leitura ou gravação. Esta primeira versão não inclui painel administrativo para a secretaria consultar todos os membros.
-
-## Publicação
-Site estático: publique a raiz do repositório em hospedagem estática ou servidor web. O PDF usa jsPDF via CDN e precisa de conexão com a internet.
+CPF e RG são dados pessoais. Não publique regras abertas de leitura ou gravação no Firebase. Acesso a documentos deve ser controlado pela autenticação e pelas permissões do portal; a pasta compartilhada contém somente documentos destinados aos membros.
