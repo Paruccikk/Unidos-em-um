@@ -97,7 +97,7 @@ function doPost(e) {
 
     const payload = JSON.parse(rawPayload);
     requestId = String(payload.requestId || "");
-    const isDocument = payload.documentUpload === true;
+    const isDocument = payload.documentUpload === true || payload.mimeType === "application/pdf" || /\\.pdf$/i.test(String(payload.fileName || ""));
 
     // --------------------------------------------------
     // VALIDAR CONFIGURAÇÕES
