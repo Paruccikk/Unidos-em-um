@@ -4,7 +4,7 @@ import {ref,get,push,set,update} from "https://www.gstatic.com/firebasejs/10.12.
 
 const $=s=>document.querySelector(s);
 const OWNER="danielparuccikk@gmail.com";
-const DRIVE_UPLOAD_URL="https://script.google.com/macros/s/AKfycbxFOjR8zZCCTuOPqRUZ1U1M7yQE8XKrsgfvIesL-eXeDXTj8kYRiTKTdsFLRnK7Kk4Jtg/exec";
+const DRIVE_UPLOAD_URL="https://script.google.com/macros/s/AKfycbykBcBrjJ2jiwsUFLnZ_ZOnb2BlRcMdZBYvEDRQYHXI6Nu3EnNxHp1IAdcxUB5epMFRBQ/exec";
 let user=null,profile=null;
 
 function message(text,ok=false){$("#document-message").textContent=text;$("#document-message").className="message"+(ok?" success":"")}
