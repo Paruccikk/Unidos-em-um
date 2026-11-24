@@ -1,7 +1,7 @@
 import {auth,db} from "./firebase.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {ref,get,update,push,set,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-const $=s=>document.querySelector(s),units={sede:{name:"Sede",pastor:"Pastor Presidente Edi Carlos"},filial2:{name:"Filial 2",pastor:"Pastor Local Daniel Parucci"},filial3:{name:"Filial 3",pastor:"Pastor Local a definir"}};
+const $=s=>document.querySelector(s),units={sede:{name:"Sede",pastor:"Pastor Presidente Edi Carlos"},filial2:{name:"Filial 1",pastor:"Pastor Local Daniel Parucci"},filial3:{name:"Filial 2",pastor:"Pastor Local a definir"}};
 let admin=null,approvedFilter="todos";
 const WHATSAPP_OWNER="danielparuccikk@gmail.com";
 onAuthStateChanged(auth,async user=>{if(!user){location.replace("index.html");return}try{const snap=await get(ref(db,"members/"+user.uid));if(!snap.exists()||!(snap.val().admins===true||snap.val().papel==="admin")){location.replace("painel.html");return}admin=user;$("#admin-email").textContent=user.email||"";const waLink=$("#nav-whatsapp");if(waLink)waLink.hidden=(user.email||"").toLowerCase()!==WHATSAPP_OWNER;await loadMembers()}catch(e){console.error(e);message("Não foi possível validar o administrador. Verifique as regras do Firebase.")}});
