@@ -15,9 +15,8 @@ Portal responsivo de membros com autenticação Firebase, perfil pessoal, foto e
 
 ## Configuração Firebase (obrigatória)
 1. Authentication → Sign-in method: habilite **E-mail/senha**.
-2. Realtime Database → Regras: publique o conteúdo de `database.rules.json`.
+2. Realtime Database → Regras: publique o conteúdo atualizado de `database.rules.json`, incluindo `members`, `events` e `documents`.
 3. Firebase Storage: ative/crie o bucket do projeto; em Rules, publique `storage.rules`.
-4. Realtime Database: publique também as regras atualizadas para `documents` em `database.rules.json`.
 4. Confirme em `assets/js/firebase.js` se o bucket corresponde ao exibido no console Firebase.
 5. Para cadastro aberto, mantenha habilitada a criação de usuários por e-mail/senha. Se somente a secretaria cadastrar membros, remova o formulário de criação de conta e crie os usuários pelo Firebase Authentication.
 
