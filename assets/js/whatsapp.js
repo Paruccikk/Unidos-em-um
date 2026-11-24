@@ -6,7 +6,7 @@ const OWNER="danielparuccikk@gmail.com";
 const API="https://unidos-em-um-whatsapp-qr.onrender.com";
 const $=s=>document.querySelector(s);
 let currentUser=null,polling=null,dailyMessages=[],dailyDate="";
-const units={sede:"Sede",filial2:"Filial 2",filial3:"Filial 3"};
+const units={sede:"Sede",filial2:"Filial 1",filial3:"Filial 2"};
 const verses=[
   {ref:"Salmos 23:1",text:"O Senhor é nosso pastor e cuida de nós; nele encontramos direção e provisão."},
   {ref:"Provérbios 3:5-6",text:"Confie no Senhor de todo o coração e permita que Ele dirija seus caminhos."},
@@ -38,9 +38,11 @@ function saoPauloToday(){
 }
 function normalizePhone(value){
  let digits=String(value||"").replace(/\D/g,"");
- if(digits.startsWith("0"))digits=digits.replace(/^0+/,"");
- if(!digits.startsWith("55"))digits="55"+digits;
- return /^55\d{10,11}$/.test(digits)?digits:null;
+ if(!digits)return null;
+ if(digits.startsWith("00"))digits=digits.slice(2);
+ if((digits.length===12||digits.length===13)&&digits.startsWith("55"))digits=digits.slice(2);
+ if((digits.length===11||digits.length===12)&&digits.startsWith("0"))digits=digits.slice(1);
+ return digits.length===10||digits.length===11?"55"+digits:null;
 }
 function eventsForUnit(events,unitId,today,weekday){
  return events.filter(e=>{
