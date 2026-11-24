@@ -77,11 +77,10 @@ async function previewDaily(){
   const events=Object.entries(rawEvents).map(([id,e])=>({id,...e}));
   const verse=verses[Math.floor(new Date(today+"T12:00:00-03:00").getTime()/86400000)%verses.length];
   const previews=[];
-  let approvedCount=0,optedInCount=0,phoneCount=0;
+  let approvedCount=0,phoneCount=0;
   for(const [uid,m] of Object.entries(members)){
    if(m.status==="aprovado"||m.admins===true)approvedCount++;
-   if(m.status!=="aprovado"||m.notificacoesWhatsapp!==true)continue;
-   optedInCount++;
+   if(m.status!=="aprovado")continue;
    const phone=normalizePhone(m.whatsapp||m.telefone);
    if(!phone)continue;
    phoneCount++;
@@ -90,7 +89,7 @@ async function previewDaily(){
    previews.push(m.nome||"Membro");
   }
   dailyDate=today;
-  if(!dailyMessages.length){dailyShow("Nenhum destinatário encontrado. Diagnóstico: "+approvedCount+" aprovado(s), "+optedInCount+" com notificações ativadas, "+phoneCount+" com telefone válido. Confira se o membro salvou o WhatsApp e ativou a opção no próprio perfil.");$("#wa-daily-send").disabled=true;return}
+  if(!dailyMessages.length){dailyShow("Nenhum destinatário encontrado. Diagnóstico: "+approvedCount+" aprovado(s), "+phoneCount+" com telefone válido. Confira se os membros cadastraram e salvaram o WhatsApp no perfil.");$("#wa-daily-send").disabled=true;return}
   const counts={};for(const m of dailyMessages)counts[m.unit]=(counts[m.unit]||0)+1;
   dailyShow(dailyMessages.length+" destinatário(s) elegível(is). Data: "+new Date(today+"T12:00:00-03:00").toLocaleDateString("pt-BR")+". Confira antes de disparar.",true);
   const summary=document.createElement("p");summary.textContent=Object.entries(counts).map(([unit,count])=>unit+": "+count).join(" • ");$("#wa-daily-preview-list").append(summary);
