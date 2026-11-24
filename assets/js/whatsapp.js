@@ -37,10 +37,10 @@ function saoPauloToday(){
  return part("year")+"-"+part("month")+"-"+part("day");
 }
 function normalizePhone(value){
- let digits=String(value||"").replace(/\\D/g,"");
+ let digits=String(value||"").replace(/\D/g,"");
  if(digits.startsWith("0"))digits=digits.replace(/^0+/,"");
  if(!digits.startsWith("55"))digits="55"+digits;
- return /^55\\d{10,11}$/.test(digits)?digits:null;
+ return /^55\d{10,11}$/.test(digits)?digits:null;
 }
 function eventsForUnit(events,unitId,today,weekday){
  return events.filter(e=>{
@@ -76,17 +76,20 @@ async function previewDaily(){
   const members=membersSnap.val()||{},rawEvents=eventsSnap.val()||{};
   const events=Object.entries(rawEvents).map(([id,e])=>({id,...e}));
   const verse=verses[Math.floor(new Date(today+"T12:00:00-03:00").getTime()/86400000)%verses.length];
-  const previews=[];
+  const previews=[];\n  let approvedCount=0,optedInCount=0,phoneCount=0;
   for(const [uid,m] of Object.entries(members)){
+   if(m.status==="aprovado"||m.admins===true)approvedCount++;
    if(m.status!=="aprovado"||m.notificacoesWhatsapp!==true)continue;
-   const phone=normalizePhone(m.whatsapp);
+   optedInCount++;
+   const phone=normalizePhone(m.whatsapp||m.telefone);
    if(!phone)continue;
+   phoneCount++;
    const unitEvents=eventsForUnit(events,m.unidadeId,today,weekday);
    dailyMessages.push({phone,text:formatDailyMessage(m,unitEvents,today,verse),name:m.nome||"Membro",unit:units[m.unidadeId]||"Unidade não definida",events:unitEvents.length});
    previews.push(m.nome||"Membro");
   }
   dailyDate=today;
-  if(!dailyMessages.length){dailyShow("Nenhum membro aprovado com WhatsApp válido e notificações ativadas foi encontrado.");$("#wa-daily-send").disabled=true;return}
+  if(!dailyMessages.length){dailyShow("Nenhum destinatário encontrado. Diagnóstico: "+approvedCount+" aprovado(s), "+optedInCount+" com notificações ativadas, "+phoneCount+" com telefone válido. Confira se o membro salvou o WhatsApp e ativou a opção no próprio perfil.");$("#wa-daily-send").disabled=true;return}
   const counts={};for(const m of dailyMessages)counts[m.unit]=(counts[m.unit]||0)+1;
   dailyShow(dailyMessages.length+" destinatário(s) elegível(is). Data: "+new Date(today+"T12:00:00-03:00").toLocaleDateString("pt-BR")+". Confira antes de disparar.",true);
   const summary=document.createElement("p");summary.textContent=Object.entries(counts).map(([unit,count])=>unit+": "+count).join(" • ");$("#wa-daily-preview-list").append(summary);
