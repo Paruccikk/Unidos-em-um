@@ -59,7 +59,6 @@ function doPost(e) {
     const safeName = String(payload.fileName || (payload.documentUpload ? "documento" : "foto-perfil")).replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
     const blob = Utilities.newBlob(bytes, payload.mimeType, uid + "_" + Date.now() + "_" + safeName);
     const file = DriveApp.getFolderById(DRIVE_FOLDER_ID).createFile(blob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     const fileId = file.getId();
     return htmlResponse({ ok: true, fileId: fileId, url: "https://drive.google.com/uc?export=view&id=" + fileId }, requestId);
   } catch (err) {
