@@ -1,7 +1,7 @@
 const FIREBASE_API_KEY = PropertiesService.getScriptProperties().getProperty("FIREBASE_API_KEY");
 const FIREBASE_DB_URL = "https://unidos-em-um-default-rtdb.firebaseio.com";
 const DRIVE_FOLDER_ID = PropertiesService.getScriptProperties().getProperty("DRIVE_FOLDER_ID");
-const DRIVE_DOCUMENTS_FOLDER_ID = PropertiesService.getScriptProperties().getProperty("DRIVE_DOCUMENTS_FOLDER_ID");
+// Pasta exclusiva para PDFs e documentos compartilhados da igreja.\nconst DRIVE_DOCUMENTS_FOLDER_ID = PropertiesService.getScriptProperties().getProperty("DRIVE_DOCUMENTS_FOLDER_ID") || "1cJl0T85pWo26wAJ_3ajwb4DU8lzAwxHO";
 
 function authorizeDriveAccess() {
   if (!DRIVE_FOLDER_ID) throw new Error("Configure DRIVE_FOLDER_ID nas propriedades do script.");
