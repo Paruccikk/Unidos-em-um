@@ -66,6 +66,7 @@ function scheduleReconnect(reason) {
   reconnectTimer = setTimeout(async () => {
     reconnectTimer = null;
     if (intentionalDisconnect || connected || sock) return;
+    connecting = false;
     await startWhatsApp();
   }, delay);
 }
