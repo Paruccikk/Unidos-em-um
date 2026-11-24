@@ -80,7 +80,9 @@ $("#document-form").addEventListener("submit",async e=>{
  e.preventDefault();
  if(!canManage()){message("Sua conta não tem permissão para publicar documentos.");return}
  const file=$("#document-file").files[0];if(!file)return;
- if(!["application/pdf","image/jpeg","image/png","image/webp"].includes(file.type)){message("Formato não permitido. Envie PDF, JPG, PNG ou WebP.");return}
+ const extension=(file.name.split(".").pop()||"").toLowerCase();
+ const mimeType=file.type||({pdf:"application/pdf",jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",webp:"image/webp"}[extension]||"");
+ if(!["application/pdf","image/jpeg","image/png","image/webp"].includes(mimeType)){message("Formato não permitido. Envie PDF, JPG, PNG ou WebP.");return}
  if(file.size>15*1024*1024){message("O arquivo ultrapassa o limite de 15 MB.");return}
  const form=e.currentTarget,btn=form.querySelector('button[type="submit"]');btn.disabled=true;
  try{
@@ -88,10 +90,10 @@ $("#document-form").addEventListener("submit",async e=>{
   const base64=await fileToBase64(file,p=>message("Preparando arquivo... "+p+"%"));
   message("Enviando arquivo ao Google Drive... 40%");
   const idToken=await user.getIdToken();
-  const result=await uploadToDrive({documentUpload:true,idToken,base64,mimeType:file.type,fileName:file.name});
+  const result=await uploadToDrive({documentUpload:true,idToken,base64,mimeType,fileName:file.name});
   message("Arquivo recebido. Salvando na biblioteca... 90%");
   const record=push(ref(db,"documents"));
-  await set(record,{titulo:$("#document-title").value.trim(),descricao:$("#document-description").value.trim(),url:result.url,fileId:result.fileId,nomeArquivo:file.name,tipo:file.type,tamanho:file.size,ativo:true,criadoPor:user.uid,criadoEm:Date.now(),armazenamento:"google-drive"});
+  await set(record,{titulo:$("#document-title").value.trim(),descricao:$("#document-description").value.trim(),url:result.url,fileId:result.fileId,nomeArquivo:file.name,tipo:mimeType,tamanho:file.size,ativo:true,criadoPor:user.uid,criadoEm:Date.now(),armazenamento:"google-drive"});
   form.reset();message("Documento enviado ao Google Drive e publicado na biblioteca.",true);await loadDocuments();
  }catch(err){
   console.error("Falha no upload do documento:",err);
