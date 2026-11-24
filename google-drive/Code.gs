@@ -24,10 +24,12 @@ function doPost(e) {
 
     if (!FIREBASE_API_KEY || !DRIVE_FOLDER_ID) throw new Error("Configuração do servidor incompleta. Confira FIREBASE_API_KEY e DRIVE_FOLDER_ID nas propriedades do script.");
     if (!payload.idToken || !payload.base64 || !payload.mimeType) throw new Error("Dados de envio incompletos.");
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];\n    if (!allowedTypes.includes(payload.mimeType)) throw new Error("Formato não permitido. Envie PDF, JPG, PNG ou WebP.");
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+    if (!allowedTypes.includes(payload.mimeType)) throw new Error("Formato não permitido. Envie PDF, JPG, PNG ou WebP.");
 
     const bytes = Utilities.base64Decode(payload.base64);
-    const maxBytes = payload.documentUpload ? 15 * 1024 * 1024 : 5 * 1024 * 1024;\n    if (bytes.length > maxBytes) throw new Error(payload.documentUpload ? "O documento deve ter no máximo 15 MB." : "A imagem deve ter no máximo 5 MB.");
+    const maxBytes = payload.documentUpload ? 15 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (bytes.length > maxBytes) throw new Error(payload.documentUpload ? "O documento deve ter no máximo 15 MB." : "A imagem deve ter no máximo 5 MB.");
 
     const verify = UrlFetchApp.fetch("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + encodeURIComponent(FIREBASE_API_KEY), {
       method: "post",
