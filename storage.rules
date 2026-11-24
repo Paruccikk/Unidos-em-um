@@ -8,5 +8,14 @@ service firebase.storage {
                    && request.resource.size < 5 * 1024 * 1024
                    && request.resource.contentType.matches('image/(jpeg|png|webp)');
     }
+    match /documents/{documentId}/{fileName} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null
+                            && request.auth.token.email == "danielparuccikk@gmail.com"
+                            && request.resource.size < 15 * 1024 * 1024
+                            && request.resource.contentType.matches('(application/pdf|image/(jpeg|png|webp))');
+      allow delete: if request.auth != null
+                    && request.auth.token.email == "danielparuccikk@gmail.com";
+    }
   }
 }
