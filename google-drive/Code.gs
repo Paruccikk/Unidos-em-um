@@ -50,7 +50,9 @@ function doPost(e) {
     if (profileResponse.getResponseCode() !== 200 || !profile) {
       throw new Error("Não foi possível validar o cadastro no Firebase. Confira as regras do banco de dados.");
     }
-    if (profile.status !== "aprovado" && profile.admins !== true) {
+    if (payload.documentUpload) {
+      if (!(profile.admins === true || profile.papel === "admin" || profile.papel === "editor")) throw new Error("Somente Admin ou Editor pode publicar documentos.");
+    } else if (profile.status !== "aprovado" && profile.admins !== true) {
       throw new Error("Somente membros aprovados podem enviar foto.");
     }
 
