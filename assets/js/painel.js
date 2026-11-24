@@ -3,10 +3,40 @@ import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.
 import {ref,get,update,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const $=s=>document.querySelector(s);let currentUser=null,photoFile=null,photoUrl="",memberData={};
+
+function localISODate(date=new Date()){return [date.getFullYear(),String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-")}
+async function renderTodayEvents(unitId){
+ const host=$("#today-events-list"),dateLabel=$("#today-events-date");
+ if(!host)return;
+ const today=localISODate(),weekday=new Date().getDay();
+ dateLabel.textContent=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"});
+ host.replaceChildren();
+ try{
+  const snap=await get(ref(db,"events")),all=snap.val()||{};
+  const items=Object.entries(all).map(([id,e])=>({id,...e})).filter(e=>{
+   if(e.ativo===false)return false;
+   if(unitId&&e.unidadeId!==unitId)return false;
+   if(e.tipo==="fixo")return !!e.dataInicio&&!!e.dataFim&&today>=e.dataInicio&&today<=e.dataFim&&Number(e.diaSemana)===weekday&&!(e.cancelamentos&&e.cancelamentos[today]);
+   return e.data===today;
+  }).sort((a,b)=>(a.horarioInicio||"").localeCompare(b.horarioInicio||""));
+  if(!items.length){const empty=document.createElement("div");empty.className="today-events-empty";empty.textContent="Não há eventos programados para hoje na sua unidade.";host.append(empty);return}
+  const names={sede:"SEDE",filial2:"FILIAL 2",filial3:"FILIAL 3"};
+  for(const event of items){
+   const card=document.createElement("article");card.className="today-event-card";
+   const top=document.createElement("div");top.className="today-event-top";
+   const badge=document.createElement("span");badge.className="unit-highlight unit-"+(event.unidadeId||"sede");badge.textContent=names[event.unidadeId]||"IGREJA";
+   const time=document.createElement("span");time.className="today-event-time";time.textContent=(event.horarioInicio||"Horário não definido")+(event.horarioFim?" às "+event.horarioFim:"");
+   top.append(badge,time);
+   const title=document.createElement("h3");title.textContent=event.titulo||"Evento";
+   const desc=document.createElement("p");desc.textContent=event.descricao||"";
+   card.append(top,title);if(desc.textContent)card.append(desc);host.append(card);
+  }
+ }catch(error){console.error("Erro ao carregar eventos de hoje:",error);const msg=document.createElement("p");msg.className="muted";msg.textContent="Não foi possível carregar os eventos de hoje.";host.append(msg)}
+}
 const DRIVE_UPLOAD_URL="https://script.google.com/macros/s/AKfycbxFOjR8zZCCTuOPqRUZ1U1M7yQE8XKrsgfvIesL-eXeDXTj8kYRiTKTdsFLRnK7Kk4Jtg/exec";
 const units={sede:{name:"SEDE",pastor:"Pastor Presidente Edi Carlos"},filial2:{name:"FILIAL 2",pastor:"Pastor Local Daniel Parucci"},filial3:{name:"FILIAL 3",pastor:"Pastor Local a definir"}};
 const fields={nome:"#full-name",cpf:"#cpf",rg:"#rg",afiliacao:"#affiliation",cargo:"#role"};
-onAuthStateChanged(auth,async user=>{if(!user){location.replace("index.html");return}currentUser=user;try{const snap=await get(ref(db,"members/"+user.uid));if(snap.exists()){const d=snap.val();const isAdmin=d.admins===true;$("#user-email").textContent=user.email||"";memberData=d;if(d.status!=="aprovado"&&!isAdmin){location.replace("pendente.html");return}const branchAddress=d.unidadeId==="filial2"?"Travessa Arroio Irapuru, N505 — Filial 2":"Arroio São Gonçalo, N38 • São Paulo/SP";const address=$("#branch-address");if(address)address.textContent=branchAddress;const cardAddress=$("#card-address");if(cardAddress)cardAddress.textContent=branchAddress;const brandTitle=$("#brand-title");if(brandTitle)brandTitle.textContent=d.unidadeId==="filial2"?"IGREJA PENTECOSTAL UNIDOS EM UM — FILIAL 2":"IGREJA PENTECOSTAL UNIDOS EM UM";$("#full-name").value=d.nome||"";$("#cpf").value=d.cpf||"";$("#rg").value=d.rg||"";$("#affiliation").value=d.afiliacao||"";$("#birth-date").value=d.dataNascimento||"";$("#nationality").value=d.nacionalidade||"";$("#naturalness").value=d.naturalidade||"";$("#marital-status").value=d.estadoCivil||"";$("#role").value=d.cargo||"Membro";$("#member-since").value=dateForInput(d.membroDesde||d.aprovadoEm||d.criadoEm);photoUrl=d.fotoUrl||"";paintCard(d)}else{location.replace("pendente.html");return}}catch(e){console.error(e);showMessage("Não foi possível carregar seus dados. Confira as regras do Firebase.");}updateCompletion()});
+onAuthStateChanged(auth,async user=>{if(!user){location.replace("index.html");return}currentUser=user;try{const snap=await get(ref(db,"members/"+user.uid));if(snap.exists()){const d=snap.val();const isAdmin=d.admins===true;$("#user-email").textContent=user.email||"";memberData=d;if(d.status!=="aprovado"&&!isAdmin){location.replace("pendente.html");return}const branchAddress=d.unidadeId==="filial2"?"Travessa Arroio Irapuru, N505 — Filial 2":"Arroio São Gonçalo, N38 • São Paulo/SP";const address=$("#branch-address");if(address)address.textContent=branchAddress;const cardAddress=$("#card-address");if(cardAddress)cardAddress.textContent=branchAddress;const brandTitle=$("#brand-title");if(brandTitle)brandTitle.textContent=d.unidadeId==="filial2"?"IGREJA PENTECOSTAL UNIDOS EM UM — FILIAL 2":"IGREJA PENTECOSTAL UNIDOS EM UM";$("#full-name").value=d.nome||"";$("#cpf").value=d.cpf||"";$("#rg").value=d.rg||"";$("#affiliation").value=d.afiliacao||"";$("#birth-date").value=d.dataNascimento||"";$("#nationality").value=d.nacionalidade||"";$("#naturalness").value=d.naturalidade||"";$("#marital-status").value=d.estadoCivil||"";$("#role").value=d.cargo||"Membro";$("#member-since").value=dateForInput(d.membroDesde||d.aprovadoEm||d.criadoEm);photoUrl=d.fotoUrl||"";paintCard(d);await renderTodayEvents(d.unidadeId)}else{location.replace("pendente.html");return}}catch(e){console.error(e);showMessage("Não foi possível carregar seus dados. Confira as regras do Firebase.");}updateCompletion()});
 function formatBirthDate(value){if(!value)return "Não informado";const [y,m,d]=value.split("-");return `${d}/${m}/${y}`}
 function dateForInput(value){if(!value)return "";if(typeof value==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(value))return value;const date=new Date(value);if(Number.isNaN(date.getTime()))return "";const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,"0"),d=String(date.getDate()).padStart(2,"0");return `${y}-${m}-${d}`}
 function formatMemberSince(value){if(!value)return "Não informado";if(typeof value==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(value)){const [y,m,d]=value.split("-");return `${d}/${m}/${y}`}const date=new Date(value);return Number.isNaN(date.getTime())?"Não informado":date.toLocaleDateString("pt-BR")}
