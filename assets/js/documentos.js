@@ -1,6 +1,6 @@
 import {auth,db} from "./firebase.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {ref,get,push,set,remove,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {ref,get,push,set,update} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const $=s=>document.querySelector(s),UPLOAD_URL="https://script.google.com/macros/s/AKfycbxFOjR8zZCCTuOPqRUZ1U1M7yQE8XKrsgfvIesL-eXeDXTj8kYRiTKTdsFLRnK7Kk4Jtg/exec";
 let user=null,profile=null;
 function message(text,ok=false){$("#document-message").textContent=text;$("#document-message").className="message"+(ok?" success":"")}
