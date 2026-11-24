@@ -1,12 +1,47 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102d26"><title>Calendários e Eventos | Unidos em Um</title><link rel="stylesheet" href="assets/css/style.css?v=20261124-calendario"></head>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102d26">
+<title>Calendários e Eventos | Unidos em Um</title>
+<link rel="stylesheet" href="assets/css/style.css?v=20261124-agenda-cards">
+<style>
+.upcoming-panel{background:#fffefa;border:1px solid var(--line);border-radius:16px;padding:22px;margin:20px 0;box-shadow:0 8px 28px #4a372809}
+.upcoming-toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px}
+.upcoming-toolbar h2{font:700 22px 'Playfair Display';color:var(--sepia);margin:0 0 5px}
+.upcoming-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.upcoming-card{display:flex;gap:15px;padding:17px;border:1px solid #eadfd2;border-radius:12px;background:#fffcf7;min-width:0}
+.upcoming-date{flex:0 0 66px;align-self:flex-start;text-align:center;padding:10px 6px;border-radius:9px;background:#f4ead8;color:var(--terracotta)}
+.upcoming-date strong{display:block;font:700 25px 'Playfair Display';line-height:1.1}
+.upcoming-date span{display:block;font-size:10px;font-weight:800;text-transform:uppercase;margin-top:4px}
+.upcoming-content{min-width:0;flex:1}
+.upcoming-meta{font-size:10px;color:var(--terracotta);font-weight:800;letter-spacing:.35px;line-height:1.6}
+.upcoming-content h3{font:700 17px 'Playfair Display';margin:5px 0;color:var(--sepia);overflow-wrap:anywhere}
+.upcoming-content p{font-size:12px;line-height:1.6;color:var(--muted);margin:0;white-space:pre-wrap}
+.upcoming-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.upcoming-actions button{font-size:10px;padding:8px 11px}
+.calendar-panel{margin-top:26px}
+@media(max-width:700px){.upcoming-panel{padding:16px}.upcoming-toolbar{align-items:stretch;flex-direction:column}.upcoming-list{grid-template-columns:1fr}.upcoming-card{padding:13px}.upcoming-date{flex-basis:58px}.upcoming-content h3{font-size:15px}}
+</style>
+</head>
 <body class="admin-page events-page">
-<header class="topbar"><a class="brand-small" href="painel.html"><img class="church-logo" src="LOGO%20IP%20-%20Sem%20Fundo.png" alt="Logo"><b>IGREJA PENTECOSTAL<br>UNIDOS EM UM</b></a><nav class="main-nav" aria-label="Navegação principal"><a id="nav-member" href="painel.html">Minha área</a><a id="nav-admin" href="admin.html">Administração</a><a id="nav-events" href="eventos.html" aria-current="page">Calendários/Eventos</a></nav><div class="top-actions"><span id="events-email" class="user-email"></span><button id="events-logout" class="outline-btn">Sair</button></div></header>
+<header class="topbar">
+<a class="brand-small" href="painel.html"><img class="church-logo" src="LOGO%20IP%20-%20Sem%20Fundo.png" alt="Logo"><b>IGREJA PENTECOSTAL<br>UNIDOS EM UM</b></a>
+<nav class="main-nav" aria-label="Navegação principal"><a id="nav-member" href="painel.html">Minha área</a><a id="nav-admin" href="admin.html">Administração</a><a id="nav-events" href="eventos.html" aria-current="page">Calendários/Eventos</a></nav>
+<div class="top-actions"><span id="events-email" class="user-email"></span><button id="events-logout" class="outline-btn">Sair</button></div>
+</header>
 <main class="events-main">
-<section class="events-heading"><div><p class="eyebrow">AGENDA DAS CONGREGAÇÕES</p><h1>Calendários e Eventos</h1><p class="muted">A programação da Sede e das Filiais em um só lugar.</p></div><div class="events-filters"><label for="unit-filter">Exibir programação</label><select id="unit-filter"><option value="todos">Todas as igrejas</option><option value="sede">Sede</option><option value="filial2">Filial 2</option><option value="filial3">Filial 3</option></select></div></section>
-<section class="calendar-panel"><div class="calendar-toolbar"><div><h2>Calendário anual</h2><p class="muted">As datas marcadas possuem um ou mais eventos.</p></div><div class="year-controls"><button id="prev-year" class="outline-btn" type="button" aria-label="Ano anterior">‹</button><strong id="year-label"></strong><button id="next-year" class="outline-btn" type="button" aria-label="Próximo ano">›</button></div></div><div class="calendar-legend"><span><i class="legend-dot fixed"></i> Evento fixo</span><span><i class="legend-dot oneoff"></i> Evento avulso</span><span><i class="legend-dot mixed"></i> Mais de um evento</span></div><div id="annual-calendar" class="annual-calendar"><div class="admin-empty">Carregando calendário...</div></div></section>
-<section class="day-panel" id="day-panel"><div class="section-heading"><div><p class="eyebrow">PROGRAMAÇÃO DO DIA</p><h2 id="selected-date-title">Selecione uma data</h2></div></div><div id="day-events" class="day-events"><p class="muted">Clique em uma data do calendário para consultar os eventos.</p></div></section>
-<section id="event-editor" class="event-editor hidden"><div class="section-heading"><div><p class="eyebrow">GESTÃO DA PROGRAMAÇÃO</p><h2 id="event-form-title">Adicionar evento</h2><p class="muted">Disponível para usuários com acesso de Admin ou Editor.</p></div></div>
+<section class="events-heading">
+<div><p class="eyebrow">AGENDA DAS CONGREGAÇÕES</p><h1>Calendários e Eventos</h1><p class="muted">A programação da Sede e das Filiais em um só lugar.</p></div>
+<div class="events-filters"><label for="unit-filter">Exibir programação</label><select id="unit-filter"><option value="todos">Todas as igrejas</option><option value="sede">Sede</option><option value="filial2">Filial 2</option><option value="filial3">Filial 3</option></select></div>
+</section>
+
+<section class="upcoming-panel" id="upcoming-panel">
+<div class="upcoming-toolbar"><div><p class="eyebrow">FIQUE POR DENTRO</p><h2>Próximos eventos</h2><p class="muted">Veja a programação futura e os detalhes de cada encontro.</p></div></div>
+<div id="upcoming-events" class="upcoming-list"><div class="admin-empty">Carregando eventos...</div></div>
+</section>
+
+<section id="event-editor" class="event-editor hidden">
+<div class="section-heading"><div><p class="eyebrow">GESTÃO DA PROGRAMAÇÃO</p><h2 id="event-form-title">Adicionar evento</h2><p class="muted">Disponível para usuários com acesso de Admin ou Editor.</p></div></div>
 <form id="event-form"><input id="event-id" type="hidden"><div class="event-form-grid">
 <div class="field"><label for="event-title">Título do evento *</label><input id="event-title" maxlength="120" required placeholder="Ex.: Culto de celebração"></div>
 <div class="field"><label for="event-unit">Igreja *</label><select id="event-unit" required><option value="sede">Sede</option><option value="filial2">Filial 2</option><option value="filial3">Filial 3</option></select></div>
@@ -17,6 +52,16 @@
 <div class="field"><label for="event-start-time">Horário de início *</label><input id="event-start-time" type="time" required></div>
 <div class="field"><label for="event-end-time">Horário de término</label><input id="event-end-time" type="time"></div>
 <div class="field event-description-field"><label for="event-description">Descrição</label><textarea id="event-description" rows="3" maxlength="1200" placeholder="Informações adicionais sobre o evento"></textarea></div>
-</div><p id="event-conflict-warning" class="event-warning" role="status"></p><div class="form-actions"><button id="cancel-edit-event" class="outline-btn" type="button">Limpar</button><button class="primary-btn" type="submit">Salvar evento</button></div><p id="event-message" class="message" role="status"></p></form></section>
-</main><footer class="footer">IGREJA PENTECOSTAL UNIDOS EM UM • “Há, pois, muitos membros, mas um só corpo.” — 1 Coríntios 12:20</footer>
-<script type="module" src="assets/js/navigation.js?v=20261124-nav"></script><script type="module" src="assets/js/eventos.js?v=20261124-calendario"></script></body></html>
+</div><p id="event-conflict-warning" class="event-warning" role="status"></p><div class="form-actions"><button id="cancel-edit-event" class="outline-btn" type="button">Limpar</button><button class="primary-btn" type="submit">Salvar evento</button></div><p id="event-message" class="message" role="status"></p></form>
+</section>
+
+<section class="calendar-panel" id="calendar-section">
+<div class="calendar-toolbar"><div><p class="eyebrow">CONSULTA DETALHADA</p><h2>Calendário</h2><p class="muted">O calendário começa no mês atual e mostra somente datas de hoje em diante.</p></div><div class="year-controls"><button id="prev-year" class="outline-btn" type="button" aria-label="Ano anterior">‹</button><strong id="year-label"></strong><button id="next-year" class="outline-btn" type="button" aria-label="Próximo ano">›</button></div></div>
+<div class="calendar-legend"><span><i class="legend-dot fixed"></i> Evento fixo</span><span><i class="legend-dot oneoff"></i> Evento avulso</span><span><i class="legend-dot mixed"></i> Mais de um evento</span></div>
+<div id="annual-calendar" class="annual-calendar"><div class="admin-empty">Carregando calendário...</div></div>
+<section class="day-panel" id="day-panel"><div class="section-heading"><div><p class="eyebrow">PROGRAMAÇÃO DO DIA</p><h2 id="selected-date-title">Selecione uma data</h2></div></div><div id="day-events" class="day-events"><p class="muted">Clique em uma data do calendário para consultar os eventos.</p></div></section>
+</section>
+</main>
+<footer class="footer">IGREJA PENTECOSTAL UNIDOS EM UM • “Há, pois, muitos membros, mas um só corpo.” — 1 Coríntios 12:20</footer>
+<script type="module" src="assets/js/navigation.js?v=20261124-nav"></script><script type="module" src="assets/js/eventos.js?v=20261124-agenda-cards"></script>
+</body></html>
