@@ -2,6 +2,7 @@ import {auth,db} from "./firebase.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {ref,get,onValue,push,set,update,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const $=s=>document.querySelector(s),units={sede:"Sede",filial2:"Filial 2",filial3:"Filial 3"};
+let selectedUnit="todos";
 let currentUser=null,canEdit=false,events={},selectedDate="",year=new Date().getFullYear(),unsubscribe=null;
 const todayISO=()=>dateISO(new Date()),dateISO=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");
 const parseDate=s=>{const [y,m,d]=String(s||"").split("-").map(Number);return new Date(y,(m||1)-1,d||1,12)};
@@ -13,10 +14,10 @@ onAuthStateChanged(auth,async user=>{
  try{const snap=await get(ref(db,"members/"+user.uid));if(!snap.exists()){location.replace("pendente.html");return}
  const p=snap.val(),admin=p.admins===true||p.papel==="admin";if(p.status!=="aprovado"&&!admin){location.replace("pendente.html");return}
  canEdit=admin||p.papel==="editor";$("#events-email").textContent=user.email||"";if(canEdit)$("#event-editor").classList.remove("hidden");
- unsubscribe=onValue(ref(db,"events"),s=>{events=s.val()||{};renderUpcoming();renderCalendar();if(selectedDate)renderDay(selectedDate)},e=>{console.error(e);$("#upcoming-events").textContent="Não foi possível carregar os eventos. Confira as regras do Firebase.";$("#annual-calendar").textContent="Não foi possível carregar o calendário."});
- }catch(e){console.error(e);$("#upcoming-events").textContent="Não foi possível validar seu acesso."}
+ unsubscribe=onValue(ref(db,"events"),s=>{events=s.val()||{};renderUpcoming();renderCalendar();if(selectedDate)renderDay(selectedDate)},e=>{console.error(e);$("#fixed-events").textContent="Não foi possível carregar os eventos. Confira as regras do Firebase.";$("#oneoff-events").textContent="Não foi possível carregar os eventos.";$("#annual-calendar").textContent="Não foi possível carregar o calendário."});
+ }catch(e){console.error(e);$("#fixed-events").textContent="Não foi possível validar seu acesso."}
 });
-function visibleEvents(){const unit=$("#unit-filter").value;return Object.entries(events).map(([id,e])=>({id,...e})).filter(e=>unit==="todos"||e.unidadeId===unit)}
+function visibleEvents(){const unit=selectedUnit;return Object.entries(events).map(([id,e])=>({id,...e})).filter(e=>unit==="todos"||e.unidadeId===unit)}
 function occurrencesForDate(date,source=visibleEvents()){
  const weekday=parseDate(date).getDay();
  return source.flatMap(e=>{
@@ -26,26 +27,24 @@ function occurrencesForDate(date,source=visibleEvents()){
  }).sort((a,b)=>(a.horarioInicio||"").localeCompare(b.horarioInicio||""));
 }
 function upcomingOccurrences(){
- const start=todayISO(),endDate=new Date();endDate.setDate(endDate.getDate()+365);const end=dateISO(endDate),source=visibleEvents(),result=[];
- for(let d=parseDate(start);dateISO(d)<=end;d.setDate(d.getDate()+1)){
-  const date=dateISO(d);for(const e of occurrencesForDate(date,source))result.push(e);
- }
+ const start=todayISO(),endDate=new Date();endDate.setDate(endDate.getDate()+365);const end=dateISO(endDate),source=visibleEvents().filter(e=>e.tipo!=="fixo"),result=[];
+ for(let d=parseDate(start);dateISO(d)<=end;d.setDate(d.getDate()+1)){const date=dateISO(d);for(const e of occurrencesForDate(date,source))result.push(e)}
  return result.sort((a,b)=>(a.data+" "+(a.horarioInicio||"")).localeCompare(b.data+" "+(b.horarioInicio||"")));
 }
+function makeEventCard(e,fixed=false){
+ const card=document.createElement("article");card.className="upcoming-card";const dateBox=document.createElement("div");dateBox.className="upcoming-date";const day=document.createElement("strong"),month=document.createElement("span");
+ if(fixed){day.textContent=weekdays[Number(e.diaSemana??parseDate(e.dataInicio).getDay())].slice(0,3);month.textContent="FIXO"}else{day.textContent=parseDate(e.data).getDate();month.textContent=monthShort[parseDate(e.data).getMonth()]}
+ dateBox.append(day,month);const content=document.createElement("div");content.className="upcoming-content";const meta=document.createElement("div");meta.className="upcoming-meta";
+ meta.textContent=(fixed?weekdays[Number(e.diaSemana??parseDate(e.dataInicio).getDay())]:fmtDate(e.data))+" • "+units[e.unidadeId]+" • "+(e.horarioInicio||"Horário não definido")+(e.horarioFim?" às "+e.horarioFim:"");
+ const title=document.createElement("h3");title.textContent=e.titulo||"Evento";const desc=document.createElement("p");desc.textContent=e.descricao||"Sem descrição adicional.";content.append(meta,title,desc);
+ if(canEdit){const actions=document.createElement("div");actions.className="upcoming-actions";const edit=document.createElement("button");edit.type="button";edit.className="outline-btn";edit.textContent="Editar";edit.addEventListener("click",()=>editEvent(e));const cancel=document.createElement("button");cancel.type="button";cancel.className="outline-btn danger-btn";cancel.textContent=fixed?"Desativar evento fixo":"Cancelar evento";cancel.addEventListener("click",()=>cancelEvent(e,e.data||e.dataInicio));actions.append(edit,cancel);content.append(actions)}
+ card.append(dateBox,content);return card;
+}
 function renderUpcoming(){
- const host=$("#upcoming-events");host.replaceChildren();const items=upcomingOccurrences();
- if(!items.length){const empty=document.createElement("div");empty.className="admin-empty";empty.textContent="Não há eventos programados a partir de hoje para esta seleção.";host.append(empty);return}
- const shown=items.slice(0,60);
- for(const e of shown){
-  const card=document.createElement("article");card.className="upcoming-card";
-  const dateBox=document.createElement("div");dateBox.className="upcoming-date";const day=document.createElement("strong");day.textContent=parseDate(e.data).getDate();const month=document.createElement("span");month.textContent=monthShort[parseDate(e.data).getMonth()];dateBox.append(day,month);
-  const content=document.createElement("div");content.className="upcoming-content";const meta=document.createElement("div");meta.className="upcoming-meta";meta.textContent=fmtDate(e.data)+" • "+units[e.unidadeId]+" • "+(e.horarioInicio||"Horário não definido")+(e.horarioFim?" às "+e.horarioFim:"")+" • "+(e.tipo==="fixo"?"Evento fixo":"Evento avulso");
-  const title=document.createElement("h3");title.textContent=e.titulo||"Evento";const desc=document.createElement("p");desc.textContent=e.descricao||"Sem descrição adicional.";
-  content.append(meta,title,desc);
-  if(canEdit){const actions=document.createElement("div");actions.className="upcoming-actions";const edit=document.createElement("button");edit.type="button";edit.className="outline-btn";edit.textContent="Editar";edit.addEventListener("click",()=>editEvent(e));const cancel=document.createElement("button");cancel.type="button";cancel.className="outline-btn danger-btn";cancel.textContent=e.tipo==="fixo"?"Cancelar esta data":"Cancelar evento";cancel.addEventListener("click",()=>cancelEvent(e,e.data));actions.append(edit,cancel);content.append(actions)}
-  card.append(dateBox,content);host.append(card);
- }
- if(items.length>shown.length){const note=document.createElement("p");note.className="muted";note.textContent="Exibindo os próximos "+shown.length+" eventos. Consulte o calendário abaixo para localizar outras datas.";host.append(note)}
+ const fixedHost=$("#fixed-events"),oneoffHost=$("#oneoff-events");fixedHost.replaceChildren();oneoffHost.replaceChildren();const source=visibleEvents().filter(e=>e.ativo!==false);
+ const fixed=source.filter(e=>e.tipo==="fixo").sort((a,b)=>Number(a.diaSemana??parseDate(a.dataInicio).getDay())-Number(b.diaSemana??parseDate(b.dataInicio).getDay())||(a.horarioInicio||"").localeCompare(b.horarioInicio||""));const avulsos=upcomingOccurrences().slice(0,60);
+ if(!fixed.length){const empty=document.createElement("div");empty.className="admin-empty";empty.textContent="Nenhum evento fixo cadastrado para esta igreja.";fixedHost.append(empty)}else fixed.forEach(e=>fixedHost.append(makeEventCard(e,true)));
+ if(!avulsos.length){const empty=document.createElement("div");empty.className="admin-empty";empty.textContent="Nenhum evento avulso futuro cadastrado para esta igreja.";oneoffHost.append(empty)}else avulsos.forEach(e=>oneoffHost.append(makeEventCard(e,false)));
 }
 function renderCalendar(){
  const current=new Date(),currentYear=current.getFullYear(),currentMonth=current.getMonth(),host=$("#annual-calendar");
@@ -84,5 +83,5 @@ $("#event-form").addEventListener("submit",async ev=>{
  try{if(id)await update(ref(db,"events/"+id),data);else{const newRef=push(ref(db,"events"));await set(newRef,{...data,criadoEm:serverTimestamp(),criadoPor:currentUser.uid})}selectedDate=date;resetForm();renderUpcoming();renderCalendar();renderDay(selectedDate);$("#event-message").textContent="Evento salvo com sucesso.";$("#event-message").className="message success"}catch(error){console.error(error);$("#event-message").textContent="Não foi possível salvar. Confira as regras do Realtime Database."}
 });
 $("#event-type").addEventListener("change",toggleFixedFields);$("#event-date").addEventListener("change",()=>{if($("#event-type").value==="fixo"&&!$("#event-id").value)$("#event-weekday").value=String(parseDate($("#event-date").value).getDay());conflictCheck()});["#event-unit","#event-title"].forEach(s=>$(s).addEventListener("change",conflictCheck));
-$("#cancel-edit-event").addEventListener("click",resetForm);$("#unit-filter").addEventListener("change",()=>{renderUpcoming();renderCalendar();if(selectedDate)renderDay(selectedDate)});$("#prev-year").addEventListener("click",()=>{if(year>new Date().getFullYear()){year--;renderCalendar()}});$("#next-year").addEventListener("click",()=>{year++;renderCalendar()});$("#events-logout").addEventListener("click",async()=>{if(unsubscribe)unsubscribe();await signOut(auth);location.replace("index.html")});
+$("#cancel-edit-event").addEventListener("click",resetForm);document.querySelectorAll("[data-unit-filter]").forEach(button=>button.addEventListener("click",()=>{selectedUnit=button.dataset.unitFilter;document.querySelectorAll("[data-unit-filter]").forEach(item=>{const active=item===button;item.classList.toggle("active",active);item.setAttribute("aria-pressed",String(active))});renderUpcoming();renderCalendar();if(selectedDate)renderDay(selectedDate)}));$("#prev-year").addEventListener("click",()=>{if(year>new Date().getFullYear()){year--;renderCalendar()}});$("#next-year").addEventListener("click",()=>{year++;renderCalendar()});$("#events-logout").addEventListener("click",async()=>{if(unsubscribe)unsubscribe();await signOut(auth);location.replace("index.html")});
 selectedDate=todayISO();resetForm();renderDay(selectedDate);
