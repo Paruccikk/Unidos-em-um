@@ -321,3 +321,18 @@ input,select,textarea{font-size:16px}
 .photo-frame{width:65px;height:88px}.card-fields-grid{column-gap:5px}.card-footer{font-size:5.5px}
 }
 @media(hover:none){.primary-btn:hover,.outline-btn:hover,.filter-chip:hover{transform:none}}
+
+/* Eventos de hoje no painel do membro */
+.today-events-panel{margin:0 0 26px;padding:20px;background:#fffefa;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 28px #4a372809}
+.today-events-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}
+.today-events-heading h2{font:700 22px 'Playfair Display';color:var(--sepia);margin:0 0 4px}
+.today-events-heading .eyebrow{margin:0 0 5px}
+.today-events-heading .muted{font-size:11px;margin:0}
+.today-events-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.today-event-card{min-width:0;padding:13px;border:1px solid #eadfd2;border-radius:11px;background:#fffcf7}
+.today-event-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.today-event-time{font-size:10px;font-weight:800;color:var(--terracotta)}
+.today-event-card h3{font:700 16px 'Playfair Display';color:var(--sepia);margin:9px 0 5px;overflow-wrap:anywhere}
+.today-event-card p{font-size:11px;line-height:1.5;color:var(--muted);margin:0;white-space:pre-wrap}
+.today-events-empty{grid-column:1/-1;padding:16px;border:1px dashed #e5d5c1;border-radius:10px;color:var(--muted);font-size:12px;text-align:center;background:#fffcf7}
+@media(max-width:760px){.today-events-panel{padding:15px;margin-bottom:18px}.today-events-heading{align-items:flex-start;flex-direction:column}.today-events-heading h2{font-size:20px}.today-events-list{grid-template-columns:1fr}.today-event-card{padding:12px}}
