@@ -12,6 +12,10 @@
     "events": {
       ".read": "auth != null && (root.child('members').child(auth.uid).child('status').val() === 'aprovado' || root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
       ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')"
+    },
+    "documents": {
+      ".read": "auth != null && (root.child('members').child(auth.uid).child('status').val() === 'aprovado' || root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
+      ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')"
     }
   }
 }
