@@ -68,7 +68,7 @@ async function requireMemberManager(req,res,next) {
     if (!identityResponse.ok || !account) return res.status(401).json({error:"Sessão Firebase inválida. Entre novamente."});
     const profileResponse = await fetch(DB_URL+"/members/"+encodeURIComponent(account.localId)+".json?auth="+encodeURIComponent(token));
     const profile = await profileResponse.json();
-    const master = profile?.admins === true;
+    const master = String(account.email || "").toLowerCase() === ADMIN_EMAIL;
     const manager = profile?.status === "aprovado" && (profile?.papel === "admin" || profile?.papel === "editor") && !!profile?.unidadeId;
     if (!master && !manager) return res.status(403).json({error:"Sua conta não possui permissão para gerenciar membros."});
     req.owner = account;
