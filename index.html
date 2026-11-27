@@ -1,4 +1,49 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102d26"><title>Unidos em Um | Acesso</title><link rel="stylesheet" href="assets/css/style.css?v=20261124-logo3d-png"></head>
-<body class="auth-page"><main class="auth-shell"><section class="brand-panel"><div class="brand-mark"><img class="church-logo" src="logo3d.png" alt="Logo Igreja Pentecostal Unidos em Um"></div><p class="eyebrow">COMUNIDADE • FÉ • UNIÃO</p><h1>Unidos<br>em Um</h1><p class="brand-copy">Uma igreja, uma família, unidos pelo amor de Cristo.</p><div class="brand-verse">“Há, pois, muitos membros, mas um só corpo.”<small>1 Coríntios 12:20</small></div></section>
-<section class="auth-card"><div class="mobile-brand"><img class="church-logo" src="logo3d.png" alt="Logo Igreja Pentecostal Unidos em Um"><span>IGREJA PENTECOSTAL<br>UNIDOS EM UM</span></div><p class="eyebrow">ÁREA DO MEMBRO</p><h2>Acesse sua conta</h2><p class="muted">Entre para visualizar sua carteirinha digital.</p><form id="login-form"><label for="email">E-mail</label><input id="email" type="email" autocomplete="email" placeholder="seu@email.com" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" placeholder="Sua senha" required><button class="primary-btn" type="submit">Entrar no painel <span>→</span></button></form><div class="auth-divider"><span>ou</span></div><p class="signup-line">Ainda não tem acesso? <button id="show-signup" class="text-btn" type="button">Criar conta</button></p><form id="signup-form" class="hidden"><h3>Criar acesso</h3><label for="new-name">Nome</label><input id="new-name" required autocomplete="name" placeholder="Seu nome"><label for="new-email">E-mail</label><input id="new-email" type="email" required autocomplete="email" placeholder="seu@email.com"><label for="new-unit">Unidade que deseja frequentar</label><select id="new-unit" required><option value="">Selecione a unidade</option><option value="sede">Sede</option><option value="filial2">Filial 2</option><option value="filial3">Filial 3</option></select><label for="new-password">Senha (mínimo 6 caracteres)</label><input id="new-password" type="password" minlength="6" required autocomplete="new-password"><button class="primary-btn" type="submit">Criar minha conta</button></form><p id="auth-message" class="message" role="status"></p><p class="privacy-note">Seus dados pessoais são protegidos e vinculados à sua conta.</p></section></main><script type="module" src="assets/js/auth.js"></script></body></html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102d26"><title>Unidos em Um | Acesso</title><link rel="stylesheet" href="assets/css/style.css?v=20261127-versiculo-diario"></head>
+<body class="auth-page"><main class="auth-shell"><section class="brand-panel"><div class="brand-mark"><img class="church-logo" src="logo3d.png" alt="Logo Igreja Pentecostal Unidos em Um"></div><p class="eyebrow">COMUNIDADE • FÉ • UNIÃO</p><h1>Unidos<br>em Um</h1><p class="brand-copy">Uma igreja, uma família, unidos pelo amor de Cristo.</p><section class="daily-verse" data-daily-verse aria-live="polite"><span class="daily-verse-label">✦ VERSÍCULO DO DIA</span><blockquote data-verse-text>“O Senhor é o meu pastor; nada me faltará.”</blockquote><strong data-verse-reference>Salmos 23:1</strong></section></section>
+<section class="auth-card"><div class="mobile-brand"><img class="church-logo" src="logo3d.png" alt="Logo Igreja Pentecostal Unidos em Um"><span>IGREJA PENTECOSTAL<br>UNIDOS EM UM</span></div><section class="daily-verse daily-verse-mobile" data-daily-verse aria-live="polite"><span class="daily-verse-label">✦ VERSÍCULO DO DIA</span><blockquote data-verse-text>“O Senhor é o meu pastor; nada me faltará.”</blockquote><strong data-verse-reference>Salmos 23:1</strong></section><p class="eyebrow">ÁREA DO MEMBRO</p><h2>Acesse sua conta</h2><p class="muted">Entre para visualizar sua carteirinha digital.</p><form id="login-form"><label for="email">E-mail</label><input id="email" type="email" autocomplete="email" placeholder="seu@email.com" required><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" placeholder="Sua senha" required><button class="primary-btn" type="submit">Entrar no painel <span>→</span></button></form><div class="auth-divider"><span>ou</span></div><p class="signup-line">Ainda não tem acesso? <button id="show-signup" class="text-btn" type="button">Criar conta</button></p><form id="signup-form" class="hidden"><h3>Criar acesso</h3><label for="new-name">Nome</label><input id="new-name" required autocomplete="name" placeholder="Seu nome"><label for="new-email">E-mail</label><input id="new-email" type="email" required autocomplete="email" placeholder="seu@email.com"><label for="new-unit">Unidade que deseja frequentar</label><select id="new-unit" required><option value="">Selecione a unidade</option><option value="sede">Sede</option><option value="filial2">Filial 2</option><option value="filial3">Filial 3</option></select><label for="new-password">Senha (mínimo 6 caracteres)</label><input id="new-password" type="password" minlength="6" required autocomplete="new-password"><button class="primary-btn" type="submit">Criar minha conta</button></form><p id="auth-message" class="message" role="status"></p><p class="privacy-note">Seus dados pessoais são protegidos e vinculados à sua conta.</p></section></main><script type="module" src="assets/js/auth.js"></script><script>
+(()=> {
+ const verses=[
+  ["O Senhor é o meu pastor; nada me faltará.","Salmos 23:1"],
+  ["Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará.","Salmos 37:5"],
+  ["Tudo posso naquele que me fortalece.","Filipenses 4:13"],
+  ["O amor é paciente, o amor é bondoso.","1 Coríntios 13:4"],
+  ["A tua palavra é lâmpada para os meus pés e luz para o meu caminho.","Salmos 119:105"],
+  ["Não temas, porque eu sou contigo.","Isaías 41:10"],
+  ["O Senhor é a minha luz e a minha salvação; a quem temerei?","Salmos 27:1"],
+  ["Buscai primeiro o Reino de Deus, e a sua justiça.","Mateus 6:33"],
+  ["Alegrai-vos na esperança, sede pacientes na tribulação, perseverai na oração.","Romanos 12:12"],
+  ["A resposta branda desvia o furor.","Provérbios 15:1"],
+  ["Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia.","Salmos 46:1"],
+  ["O choro pode durar uma noite, mas a alegria vem pela manhã.","Salmos 30:5"],
+  ["Sede fortes e corajosos; não temais.","Josué 1:9"],
+  ["A fé é o firme fundamento das coisas que se esperam.","Hebreus 11:1"],
+  ["Em tudo dai graças.","1 Tessalonicenses 5:18"],
+  ["O Senhor pelejará por vós, e vos calareis.","Êxodo 14:14"],
+  ["Confia no Senhor de todo o teu coração.","Provérbios 3:5"],
+  ["A minha graça te basta, porque o meu poder se aperfeiçoa na fraqueza.","2 Coríntios 12:9"],
+  ["Bem-aventurados os pacificadores, porque serão chamados filhos de Deus.","Mateus 5:9"],
+  ["Perto está o Senhor dos que têm o coração quebrantado.","Salmos 34:18"],
+  ["Se Deus é por nós, quem será contra nós?","Romanos 8:31"],
+  ["O Senhor te abençoe e te guarde.","Números 6:24"],
+  ["Aquietai-vos e sabei que eu sou Deus.","Salmos 46:10"],
+  ["O perfeito amor lança fora o medo.","1 João 4:18"],
+  ["Ensina-nos a contar os nossos dias, para que alcancemos coração sábio.","Salmos 90:12"],
+  ["Porque para Deus nada é impossível.","Lucas 1:37"],
+  ["Sede praticantes da palavra e não somente ouvintes.","Tiago 1:22"],
+  ["O Senhor é bom, uma fortaleza no dia da angústia.","Naum 1:7"],
+  ["Aquele que começou boa obra em vós há de completá-la.","Filipenses 1:6"],
+  ["Andai em amor, como também Cristo vos amou.","Efésios 5:2"]
+ ];
+ const now=new Date();
+ const start=new Date(now.getFullYear(),0,0);
+ const day=Math.floor((now-start)/86400000);
+ const verse=verses[(day-1)%verses.length];
+ document.querySelectorAll("[data-daily-verse]").forEach(card=>{
+  const quote=card.querySelector("[data-verse-text]");
+  const ref=card.querySelector("[data-verse-reference]");
+  if(quote)quote.textContent="“"+verse[0]+"”";
+  if(ref)ref.textContent=verse[1];
+ });
+})();
+</script></body></html>
