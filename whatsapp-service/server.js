@@ -5,6 +5,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import makeWASocket, { useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } from "@whiskeysockets/baileys";
+import { initializeApp, applicationDefault, cert, getApps } from "firebase-admin/app";
+import { getAuth as getAdminAuth } from "firebase-admin/auth";
+import { getDatabase as getAdminDatabase } from "firebase-admin/database";
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -131,6 +134,26 @@ async function startWhatsApp() {
 }
 
 
+
+function getFirebaseAdminServices() {
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  const credentialPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  if (!raw && !credentialPath) return null;
+  let credential;
+  if (raw) {
+    let serviceAccount;
+    try { serviceAccount = JSON.parse(raw); }
+    catch { throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON não contém JSON válido."); }
+    credential = cert(serviceAccount);
+  } else {
+    credential = applicationDefault();
+  }
+  const appName = "unidos-em-um-admin";
+  const existing = getApps().find(item => item.name === appName);
+  const firebaseApp = existing || initializeApp({ credential, databaseURL: DB_URL }, appName);
+  return { auth: getAdminAuth(firebaseApp), db: getAdminDatabase(firebaseApp) };
+}
+
 function normalizeBrazilPhone(value) { let digits=String(value||"").replace(/\D/g,""); if(!digits)return null; if(digits.startsWith("00"))digits=digits.slice(2); if((digits.length===12||digits.length===13)&&digits.startsWith("55"))digits=digits.slice(2); if((digits.length===11||digits.length===12)&&digits.startsWith("0"))digits=digits.slice(1); return digits.length===10||digits.length===11?"55"+digits:null; }
 
 app.post("/api/whatsapp/daily/send",requireOwner,async(req,res)=>{
@@ -162,6 +185,39 @@ app.post("/api/whatsapp/daily/send",requireOwner,async(req,res)=>{
   } catch (error) {
     console.error("Falha no disparo diário:",error);
     res.status(500).json({error:"Ocorreu uma falha durante o disparo diário."});
+  }
+});
+
+
+app.delete("/api/admin/members/:uid",requireOwner,async(req,res)=>{
+  try {
+    const uid = String(req.params.uid || "").trim();
+    if (!uid || uid.length > 128 || uid.includes("/") || uid === req.owner.localId) {
+      return res.status(400).json({error:"Identificador inválido ou tentativa de excluir a própria conta."});
+    }
+    const services = getFirebaseAdminServices();
+    if (!services) return res.status(503).json({error:"A exclusão completa ainda não está configurada. Configure GOOGLE_APPLICATION_CREDENTIALS ou FIREBASE_SERVICE_ACCOUNT_JSON no ambiente do serviço."});
+    const memberRef = services.db.ref("members/" + uid);
+    const memberSnap = await memberRef.get();
+    if (!memberSnap.exists()) return res.status(404).json({error:"Cadastro não encontrado."});
+    const member = memberSnap.val() || {};
+    if (String(member.email || "").toLowerCase() === ADMIN_EMAIL) {
+      return res.status(403).json({error:"A conta principal da igreja não pode ser excluída por aqui."});
+    }
+    try {
+      const authUser = await services.auth.getUser(uid);
+      if (String(authUser.email || "").toLowerCase() === ADMIN_EMAIL) {
+        return res.status(403).json({error:"A conta principal da igreja não pode ser excluída por aqui."});
+      }
+      await services.auth.deleteUser(uid);
+    } catch (error) {
+      if (error?.code !== "auth/user-not-found") throw error;
+    }
+    await memberRef.remove();
+    return res.json({ok:true,uid,deletedAuthAccount:true});
+  } catch (error) {
+    console.error("Falha ao excluir membro:",error);
+    return res.status(500).json({error:"Não foi possível concluir a exclusão. Verifique a configuração do Firebase Admin e os logs do serviço."});
   }
 });
 
