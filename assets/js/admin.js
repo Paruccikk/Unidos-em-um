@@ -1,7 +1,7 @@
 import {auth,db} from "./firebase.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {ref,get,update,push,set,remove,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import {isMasterAdmin} from "./permissions.js";
+import {isMasterAdmin} from "./permissions.js?v=20261127-perfil-master";
 const $=s=>document.querySelector(s),units={sede:{name:"Sede",pastor:"Pastor Presidente Edi Carlos"},filial2:{name:"Filial 1",pastor:"Pastor Local Daniel Parucci"},filial3:{name:"Filial 2 - BA",pastor:"Pastor Local a definir"}};
 let admin=null,adminProfile=null,isMaster=false,ownUnit=null,approvedFilter="todos",approvedSearch="",allMembers=[];
 function memberUnitId(m){return m?.unidadeId||m?.unidadeSolicitada||null}
