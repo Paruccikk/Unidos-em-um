@@ -51,22 +51,32 @@ function eventsForUnit(events,unitId,today,weekday){
   return e.data===today;
  }).sort((a,b)=>(a.horarioInicio||"").localeCompare(b.horarioInicio||""));
 }
-function formatDailyMessage(member,events,today,verse){
+function formatDailyMessage(member,eventsByUnit,today,verse){
  const date=new Date(today+"T12:00:00-03:00").toLocaleDateString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"long",year:"numeric"});
  let message="A paz do Senhor, "+(member.nome||"irmão/irmã")+"! 🙏\n\n";
  message+="📖 *Versículo do dia — "+date+"*\n"+verse.ref+"\n"+verse.text+"\n";
- if(events.length){
-  message+="\n⛪ *Eventos de hoje — "+(units[member.unidadeId]||"sua unidade")+"*\n";
-  for(const e of events){
-   message+="\n• *"+(e.titulo||"Evento")+"*";
-   if(e.horarioInicio)message+=" — "+e.horarioInicio+(e.horarioFim?" às "+e.horarioFim:"");
-   if(e.local)message+="\n  Local: "+e.local;
-   if(e.descricao)message+="\n  "+e.descricao;
+ const totalEvents=Object.values(eventsByUnit).reduce((total,events)=>total+events.length,0);
+ if(totalEvents){
+  message+="\n⛪ *Programação de hoje — todas as congregações*\n";
+  for(const [unitId,unitName] of Object.entries(units)){
+   const unitEvents=eventsByUnit[unitId]||[];
+   message+="\n📍 *"+unitName+"*";
+   if(!unitEvents.length){
+    message+="\nSem eventos programados para hoje.\n";
+    continue;
+   }
+   for(const e of unitEvents){
+    message+="\n• *"+(e.titulo||"Evento")+"*";
+    if(e.horarioInicio)message+=" — "+e.horarioInicio+(e.horarioFim?" às "+e.horarioFim:"");
+    if(e.local)message+="\n  Local: "+e.local;
+    if(e.descricao)message+="\n  "+e.descricao;
+   }
+   message+="\n";
   }
  } else {
-  message+="\nQue o Senhor abençoe seu dia! Hoje não há eventos programados para sua unidade.";
+  message+="\nQue o Senhor abençoe seu dia! Hoje não há eventos programados em nenhuma das congregações.";
  }
- message+="\n\n_Igreja Pentecostal Unidos em Um_";
+ message+="\n_Igreja Pentecostal Unidos em Um_";
  return message;
 }
 async function previewDaily(){
@@ -86,8 +96,10 @@ async function previewDaily(){
    const phone=normalizePhone(m.whatsapp||m.telefone);
    if(!phone)continue;
    phoneCount++;
-   const unitEvents=eventsForUnit(events,m.unidadeId,today,weekday);
-   dailyMessages.push({phone,text:formatDailyMessage(m,unitEvents,today,verse),name:m.nome||"Membro",unit:units[m.unidadeId]||"Unidade não definida",events:unitEvents.length});
+   const eventsByUnit={};
+   for(const unitId of Object.keys(units))eventsByUnit[unitId]=eventsForUnit(events,unitId,today,weekday);
+   const totalEvents=Object.values(eventsByUnit).reduce((total,unitEvents)=>total+unitEvents.length,0);
+   dailyMessages.push({phone,text:formatDailyMessage(m,eventsByUnit,today,verse),name:m.nome||"Membro",unit:units[m.unidadeId]||"Unidade não definida",events:totalEvents});
    previews.push(m.nome||"Membro");
   }
   dailyDate=today;
