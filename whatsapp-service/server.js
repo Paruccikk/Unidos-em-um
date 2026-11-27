@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 const API_KEY = process.env.FIREBASE_API_KEY;
 const DB_URL = (process.env.FIREBASE_DATABASE_URL || "https://unidos-em-um-default-rtdb.firebaseio.com").replace(/\/$/, "");
-const ADMIN_EMAIL = "danielparuccikk@gmail.com";
+const WHATSAPP_OWNER_EMAIL = "danielparuccikk@gmail.com";
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "https://unidos-em-um-site.onrender.com").split(",").map(v => v.trim()).filter(Boolean);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const authDir = process.env.WA_AUTH_DIR || path.join("/tmp", "unidos-em-um-wa-auth");
@@ -43,7 +43,7 @@ async function requireOwner(req,res,next) {
     const identity = await identityResponse.json();
     const account = identity.users?.[0];
     if (!identityResponse.ok || !account) return res.status(401).json({error:"Sessão Firebase inválida. Entre novamente."});
-    if (String(account.email || "").toLowerCase() !== ADMIN_EMAIL) return res.status(403).json({error:"Esta área é exclusiva da conta autorizada."});
+    if (String(account.email || "").toLowerCase() !== WHATSAPP_OWNER_EMAIL) return res.status(403).json({error:"Esta área é exclusiva da conta autorizada."});
     const profileResponse = await fetch(DB_URL+"/members/"+encodeURIComponent(account.localId)+".json?auth="+encodeURIComponent(token));
     const profile = await profileResponse.json();
     if (!profile || !(profile.admins === true || profile.papel === "admin")) return res.status(403).json({error:"A conta não possui permissão de administrador."});
@@ -68,8 +68,9 @@ async function requireMemberManager(req,res,next) {
     if (!identityResponse.ok || !account) return res.status(401).json({error:"Sessão Firebase inválida. Entre novamente."});
     const profileResponse = await fetch(DB_URL+"/members/"+encodeURIComponent(account.localId)+".json?auth="+encodeURIComponent(token));
     const profile = await profileResponse.json();
-    const master = String(account.email || "").toLowerCase() === ADMIN_EMAIL;
-    const manager = profile?.status === "aprovado" && (profile?.papel === "admin" || profile?.papel === "editor") && !!profile?.unidadeId;
+    const masterResponse = await fetch(DB_URL+"/masterAdmins/"+encodeURIComponent(account.localId)+".json?auth="+encodeURIComponent(token));
+    const master = masterResponse.ok && (await masterResponse.json()) === true;
+    const manager = profile?.status === "aprovado" && (profile?.papel === "admin" || profile?.papel === "editor" || profile?.admins === true) && !!profile?.unidadeId;
     if (!master && !manager) return res.status(403).json({error:"Sua conta não possui permissão para gerenciar membros."});
     req.owner = account;
     req.managerProfile = profile;
@@ -82,7 +83,7 @@ async function requireMemberManager(req,res,next) {
 }
 
 function status() {
-  return { connected, connecting, qr:qrDataUrl, phone, error:lastError, owner:ADMIN_EMAIL };
+  return { connected, connecting, qr:qrDataUrl, phone, error:lastError, owner:WHATSAPP_OWNER_EMAIL };
 }
 
 function scheduleReconnect(reason) {
@@ -353,14 +354,9 @@ app.delete("/api/admin/members/:uid",requireMemberManager,async(req,res)=>{
     if (!memberSnap.exists()) return res.status(404).json({error:"Cadastro não encontrado."});
     const member = memberSnap.val() || {};
     if (!req.isMaster && member.unidadeId !== req.managerProfile.unidadeId) return res.status(403).json({error:"Você só pode excluir membros da sua própria igreja."});
-    if (member.admins === true || String(member.email || "").toLowerCase() === ADMIN_EMAIL) {
-      return res.status(403).json({error:"A conta principal da igreja não pode ser excluída por aqui."});
-    }
+    const targetMaster = await services.db.ref("masterAdmins/"+uid).get();
+    if (targetMaster.val() === true) return res.status(403).json({error:"A conta Master não pode ser excluída por administradores de unidade."});
     try {
-      const authUser = await services.auth.getUser(uid);
-      if (String(authUser.email || "").toLowerCase() === ADMIN_EMAIL) {
-        return res.status(403).json({error:"A conta principal da igreja não pode ser excluída por aqui."});
-      }
       await services.auth.deleteUser(uid);
     } catch (error) {
       if (error?.code !== "auth/user-not-found") throw error;
