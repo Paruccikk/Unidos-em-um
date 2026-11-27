@@ -3,7 +3,8 @@ import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.
 import {ref,get,update,push,set,remove,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const $=s=>document.querySelector(s),units={sede:{name:"Sede",pastor:"Pastor Presidente Edi Carlos"},filial2:{name:"Filial 1",pastor:"Pastor Local Daniel Parucci"},filial3:{name:"Filial 2 - BA",pastor:"Pastor Local a definir"}};
 let admin=null,adminProfile=null,isMaster=false,ownUnit=null,approvedFilter="todos",approvedSearch="",allMembers=[];
-function canManageMember(m){return !!m&&(isMaster||!!ownUnit&&m.unidadeId===ownUnit&&m.admins!==true)}
+function memberUnitId(m){return m?.unidadeId||m?.unidadeSolicitada||null}
+function canManageMember(m){return !!m&&(isMaster||!!ownUnit&&memberUnitId(m)===ownUnit&&m.admins!==true)}
 function visibleMemberList(list){return list}
 const WHATSAPP_OWNER="danielparuccikk@gmail.com";
 onAuthStateChanged(auth,async user=>{if(!user){location.replace("index.html");return}try{const snap=await get(ref(db,"members/"+user.uid));if(!snap.exists()){location.replace("painel.html");return}adminProfile=snap.val();isMaster=(user.email||"").toLowerCase()===WHATSAPP_OWNER;ownUnit=adminProfile.unidadeId||null;const canEnter=isMaster||((adminProfile.papel==="admin"||adminProfile.papel==="editor")&&adminProfile.status==="aprovado"&&!!ownUnit);if(!canEnter){location.replace("painel.html");return}admin=user;$("#admin-email").textContent=user.email||"";const waLink=$("#nav-whatsapp");if(waLink)waLink.hidden=(user.email||"").toLowerCase()!==WHATSAPP_OWNER;configureUnitScope();await loadMembers()}catch(e){console.error(e);message("Não foi possível validar o administrador. Verifique as regras do Firebase.")}});
