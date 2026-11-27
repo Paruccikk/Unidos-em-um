@@ -3,15 +3,13 @@ import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.
 import {ref,get} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const $=id=>document.getElementById(id);
 let currentUser=null;
-const fields=["church-address","secretary-phone","pastor-phone","invited-church","event-theme","event-verse","event-date","event-time","event-songs","greeting"];
+const fields=["church-address","invited-church","event-theme","event-verse","event-date","event-time","event-songs","greeting"];
 function isLeader(profile){return profile&&(profile.admins===true||profile.papel==="admin"||profile.papel==="editor")}
 function datePt(value){if(!value)return"";const [y,m,d]=value.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"})}
 function updatePreview(){
  $("preview-address").textContent=$("church-address").value.trim();
- $("preview-secretary").textContent=$("secretary-phone").value.trim();
- $("preview-pastor").textContent=$("pastor-phone").value.trim();
  $("preview-invited").textContent=$("invited-church").value.trim()||"Igreja / Grupo convidado";
- $("preview-theme").textContent=$("event-theme").value.trim()||"Tema do encontro";
+ $("preview-theme-title").textContent=$("event-theme").value.trim()||"TEMA DO ENCONTRO";
  $("preview-verse").textContent=$("event-verse").value.trim();
  $("preview-greeting").textContent=$("greeting").value.trim();
  const date=datePt($("event-date").value),time=$("event-time").value;
