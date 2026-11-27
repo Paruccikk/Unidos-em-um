@@ -156,6 +156,130 @@ function getFirebaseAdminServices() {
 
 function normalizeBrazilPhone(value) { let digits=String(value||"").replace(/\D/g,""); if(!digits)return null; if(digits.startsWith("00"))digits=digits.slice(2); if((digits.length===12||digits.length===13)&&digits.startsWith("55"))digits=digits.slice(2); if((digits.length===11||digits.length===12)&&digits.startsWith("0"))digits=digits.slice(1); return digits.length===10||digits.length===11?"55"+digits:null; }
 
+
+const DAILY_UNITS = { sede:"Sede", filial2:"Filial 1", filial3:"Filial 2" };
+const DAILY_VERSES = [
+  {ref:"Salmos 23:1",text:"O Senhor é nosso pastor e cuida de nós; nele encontramos direção e provisão."},
+  {ref:"Provérbios 3:5-6",text:"Confie no Senhor de todo o coração e permita que Ele dirija seus caminhos."},
+  {ref:"Isaías 41:10",text:"Não tenha medo, pois Deus está com você, fortalece e sustenta."},
+  {ref:"Filipenses 4:6-7",text:"Apresente suas necessidades a Deus em oração, e a paz dele guardará seu coração."},
+  {ref:"Salmos 46:1",text:"Deus é nosso refúgio e fortaleza, socorro presente nas dificuldades."},
+  {ref:"Mateus 5:16",text:"Que a luz de vocês brilhe diante das pessoas, para que Deus seja glorificado."},
+  {ref:"Josué 1:9",text:"Seja forte e corajoso: o Senhor seu Deus estará com você por onde andar."}
+];
+let dailyJobRunning = false;
+
+function saoPauloDateParts() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone:"America/Sao_Paulo", year:"numeric", month:"2-digit", day:"2-digit",
+    hour:"2-digit", minute:"2-digit", hourCycle:"h23"
+  }).formatToParts(new Date());
+  const get = type => parts.find(part => part.type === type)?.value || "00";
+  return { date:get("year")+"-"+get("month")+"-"+get("day"), hour:Number(get("hour")), minute:Number(get("minute")) };
+}
+function dailyEventsForUnit(events, unitId, today, weekday) {
+  return events.filter(event => {
+    if (event.ativo === false || event.unidadeId !== unitId) return false;
+    if (event.tipo === "fixo") {
+      return !!event.dataInicio && !!event.dataFim && today >= event.dataInicio &&
+        today <= event.dataFim && Number(event.diaSemana) === weekday &&
+        !(event.cancelamentos && event.cancelamentos[today]);
+    }
+    return event.data === today;
+  }).sort((a,b) => String(a.horarioInicio||"").localeCompare(String(b.horarioInicio||"")));
+}
+function buildDailyWhatsAppText(member, eventsByUnit, today, verse) {
+  const date = new Date(today+"T12:00:00-03:00").toLocaleDateString("pt-BR", {
+    timeZone:"America/Sao_Paulo", day:"2-digit", month:"long", year:"numeric"
+  });
+  let message = "A paz do Senhor, "+(member.nome||"irmão/irmã")+"! 🙏\n\n";
+  message += "📖 *Versículo do dia — "+date+"*\n"+verse.ref+"\n"+verse.text+"\n";
+  const totalEvents = Object.values(eventsByUnit).reduce((total, items) => total+items.length, 0);
+  if (totalEvents) {
+    message += "\n⛪ *Programação de hoje — todas as congregações*\n";
+    for (const [unitId, unitName] of Object.entries(DAILY_UNITS)) {
+      const items = eventsByUnit[unitId] || [];
+      message += "\n📍 *"+unitName+"*";
+      if (!items.length) { message += "\nSem eventos programados para hoje.\n"; continue; }
+      for (const event of items) {
+        message += "\n• *"+(event.titulo||"Evento")+"*";
+        if (event.horarioInicio) message += " — "+event.horarioInicio+(event.horarioFim?" às "+event.horarioFim:"");
+        if (event.local) message += "\n  Local: "+event.local;
+        if (event.descricao) message += "\n  "+event.descricao;
+      }
+      message += "\n";
+    }
+  } else {
+    message += "\nQue o Senhor abençoe seu dia! Hoje não há eventos programados em nenhuma das congregações.";
+  }
+  return message+"\n_Igreja Pentecostal Unidos em Um_";
+}
+
+async function runAutomaticDailyWhatsApp() {
+  if (dailyJobRunning) return;
+  const now = saoPauloDateParts();
+  if (now.hour < 7 || !connected || !sock) return;
+  dailyJobRunning = true;
+  let runRef = null;
+  try {
+    const services = getFirebaseAdminServices();
+    if (!services) throw new Error("Firebase Admin não está configurado para o disparo automático.");
+    runRef = services.db.ref("system/whatsappDailyRuns/"+now.date);
+    const lock = await runRef.transaction(current => {
+      if (current?.status === "sent" || current?.status === "sending") return;
+      return {status:"sending", startedAt:Date.now(), scheduledTime:"07:00", timezone:"America/Sao_Paulo"};
+    });
+    if (!lock.committed) return;
+
+    const [membersSnap, eventsSnap] = await Promise.all([
+      services.db.ref("members").get(),
+      services.db.ref("events").get()
+    ]);
+    const members = membersSnap.val() || {};
+    const rawEvents = eventsSnap.val() || {};
+    const events = Object.entries(rawEvents).map(([id,event]) => ({id,...event}));
+    const weekday = new Date(now.date+"T12:00:00-03:00").getDay();
+    const verseIndex = Math.floor(new Date(now.date+"T12:00:00-03:00").getTime()/86400000) % DAILY_VERSES.length;
+    const verse = DAILY_VERSES[verseIndex];
+    const eventsByUnit = {};
+    for (const unitId of Object.keys(DAILY_UNITS)) {
+      eventsByUnit[unitId] = dailyEventsForUnit(events,unitId,now.date,weekday);
+    }
+
+    let sent = 0;
+    let failed = 0;
+    const failures = [];
+    for (const [uid,member] of Object.entries(members)) {
+      if (member?.status !== "aprovado") continue;
+      const destination = normalizeBrazilPhone(member.whatsapp || member.telefone);
+      if (!destination) continue;
+      try {
+        if (!connected || !sock) throw new Error("WhatsApp desconectado durante o disparo.");
+        await sock.sendMessage(destination+"@s.whatsapp.net", {
+          text:buildDailyWhatsAppText(member,eventsByUnit,now.date,verse)
+        });
+        sent += 1;
+        await new Promise(resolve => setTimeout(resolve,900));
+      } catch (error) {
+        failed += 1;
+        failures.push({member:uid.slice(-6),phone:destination.slice(-4),error:error?.message||"Falha no envio"});
+      }
+    }
+    await runRef.update({
+      status:"sent", sent, failed, total:sent+failed,
+      completedAt:Date.now(), verse:verse.ref, failures:failures.slice(0,30)
+    });
+    console.log("Disparo automático diário "+now.date+": "+sent+" enviada(s), "+failed+" falha(s).");
+  } catch (error) {
+    console.error("Falha no disparo automático diário:",error);
+    if (runRef) {
+      try { await runRef.update({status:"error",error:error?.message||"Falha desconhecida",failedAt:Date.now()}); } catch {}
+    }
+  } finally {
+    dailyJobRunning = false;
+  }
+}
+
 app.post("/api/whatsapp/daily/send",requireOwner,async(req,res)=>{
   try {
     if (!connected || !sock) return res.status(409).json({error:"WhatsApp não está conectado. Conecte antes de disparar as mensagens."});
@@ -222,6 +346,7 @@ app.delete("/api/admin/members/:uid",requireOwner,async(req,res)=>{
 });
 
 app.get("/health",(req,res)=>res.json({ok:true,service:"unidos-em-um-whatsapp"}));
+app.get("/api/whatsapp/daily/status",requireOwner,async(req,res)=>{ try { const services=getFirebaseAdminServices(); if(!services)return res.status(503).json({error:"Firebase Admin não configurado."}); const today=saoPauloDateParts().date; const snap=await services.db.ref("system/whatsappDailyRuns/"+today).get(); res.json({date:today,run:snap.val()||null,scheduledTime:"07:00",timezone:"America/Sao_Paulo"}); } catch(error) { res.status(500).json({error:"Não foi possível consultar o disparo automático."}); } });
 app.get("/api/whatsapp/status",requireOwner,(req,res)=>res.json(status()));
 app.post("/api/whatsapp/connect",requireOwner,async(req,res)=>{ await startWhatsApp(); res.json(status()); });
 app.post("/api/whatsapp/disconnect",requireOwner,async(req,res)=>{
@@ -235,4 +360,8 @@ app.post("/api/whatsapp/disconnect",requireOwner,async(req,res)=>{
   res.json(status());
 });
 
-app.listen(PORT,"0.0.0.0",()=>console.log("Unidos em Um WhatsApp service listening on "+PORT));
+app.listen(PORT,"0.0.0.0",()=>{
+  console.log("Unidos em Um WhatsApp service listening on "+PORT);
+  setTimeout(()=>startWhatsApp().catch(error=>console.error("Falha ao iniciar sessão WhatsApp:",error)),2000);
+  setInterval(runAutomaticDailyWhatsApp,30000);
+});
