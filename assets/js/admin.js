@@ -16,7 +16,8 @@ for(const m of filtered){const card=document.createElement("article");card.class
 
 async function approve(uid,unitId,button){if(!admin||!units[unitId])return;button.disabled=true;button.textContent="Aprovando...";try{await update(ref(db,"members/"+uid),{status:"aprovado",papel:"membro",unidadeId:unitId,unidadeNome:units[unitId].name,pastorUnidade:units[unitId].pastor,aprovadoPor:admin.uid,aprovadoEm:serverTimestamp(),atualizadoEm:serverTimestamp()});message("Membro aprovado e vinculado à "+units[unitId].name+".",true);await loadMembers()}catch(e){console.error(e);message("Não foi possível aprovar. Verifique as regras do Realtime Database.")}finally{button.disabled=false;button.textContent="Aprovar membro"}}
 function formatDate(v){if(!v)return"data não informada";const d=new Date(v);return Number.isNaN(d.getTime())?"data não informada":d.toLocaleDateString("pt-BR")}
-document.querySelectorAll("[data-approved-filter]").forEach(button=>button.addEventListener("click",()=>{approvedFilter=button.dataset.approvedFilter;renderApproved(allMembers)}));\nconst approvedSearchInput=$("#approved-search-input");if(approvedSearchInput)approvedSearchInput.addEventListener("input",()=>{approvedSearch=approvedSearchInput.value;renderApproved(allMembers)});
+document.querySelectorAll("[data-approved-filter]").forEach(button=>button.addEventListener("click",()=>{approvedFilter=button.dataset.approvedFilter;renderApproved(allMembers)}));
+const approvedSearchInput=$("#approved-search-input");if(approvedSearchInput)approvedSearchInput.addEventListener("input",()=>{approvedSearch=approvedSearchInput.value;renderApproved(allMembers)});
 $("#refresh-list").addEventListener("click",()=>loadMembers().catch(e=>message("Erro ao atualizar lista.")));
 $("#admin-logout").addEventListener("click",async()=>{await signOut(auth);location.replace("index.html")});
 function showMemberCard(m,openEdit=false){
