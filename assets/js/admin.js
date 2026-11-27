@@ -95,7 +95,8 @@ function renderAccessUsers(list){
   [["usuario","Usuário / Membro"],["editor","Editor"],["admin","Admin"]].forEach(([value,label])=>{const op=document.createElement("option");op.value=value;op.textContent=label;select.append(op)});select.value=accessRole(m);
   const save=document.createElement("button");save.type="button";save.className="outline-btn";save.textContent="Salvar acesso";
   save.addEventListener("click",async()=>{save.disabled=true;save.textContent="Salvando...";try{const role=select.value;if(m.uid===admin.uid&&role!=="admin"){message("Por segurança, não é possível remover seu próprio acesso de Admin.",false);return}await update(ref(db,"members/"+m.uid),{papel:role,admins:role==="admin",atualizadoEm:serverTimestamp(),permissaoAtualizadaPor:admin.uid});message("Acesso de "+(m.nome||"usuário")+" atualizado.",true);await loadMembers()}catch(error){console.error(error);message("Não foi possível alterar o acesso. Confira as regras do Firebase.")}finally{save.disabled=false;save.textContent="Salvar acesso"}});
-  row.append(info,select,save);host.append(row);
+  const del=document.createElement("button");del.type="button";del.className="danger-btn access-delete-btn";del.textContent="Excluir usuário";del.disabled=m.uid===admin?.uid;del.title=del.disabled?"Não é possível excluir a própria conta de administrador.":"Excluir cadastro e conta de acesso";del.addEventListener("click",()=>deleteMember(m,del));
+  row.append(info,select,save,del);host.append(row);
  });
 }
 const refreshAccess=$("#refresh-access");if(refreshAccess)refreshAccess.addEventListener("click",()=>loadMembers().catch(()=>message("Não foi possível atualizar os acessos.")));
