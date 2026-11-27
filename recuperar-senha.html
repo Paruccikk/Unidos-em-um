@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#4a3728">
+  <title>Recuperar senha | Unidos em Um</title>
+  <link rel="icon" type="image/png" href="/logo3d.png?v=20261127">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261127-recuperar-senha">
+  <style>
+    .reset-card{width:min(460px,100%);padding:42px 38px;align-self:center}
+    .reset-card .mobile-brand{display:flex;margin-bottom:28px}
+    .reset-card h2{font:700 28px 'Playfair Display',serif;margin:8px 0}
+    .reset-card .muted{font-size:13px;margin:0 0 22px}
+    .reset-card label{display:block;font-size:12px;font-weight:700;margin:16px 0 8px}
+    .reset-card input{width:100%;height:46px;padding:0 13px;border:1px solid var(--line);border-radius:8px;background:#fffdf9;outline:none}
+    .reset-card input:focus{border-color:var(--terracotta);box-shadow:0 0 0 3px #a52a2a12}
+    .reset-card .primary-btn{width:100%;margin-top:22px;justify-content:center}
+    .reset-back{display:block;text-align:center;margin-top:20px;color:var(--terracotta);font-size:12px;font-weight:700;text-decoration:none}
+    .reset-message{min-height:20px;margin:15px 0 0;font-size:12px;line-height:1.5;color:#a52a2a}
+    .reset-message.success{color:#28724b}
+    @media(max-width:760px){.reset-card{padding:30px 22px}}
+  </style>
+</head>
+<body class="auth-page">
+  <main class="auth-shell" style="max-width:960px;min-height:500px">
+    <section class="brand-panel">
+      <div class="brand-mark"><img class="church-logo" src="logo3d.png" alt="Logo Igreja Pentecostal Unidos em Um"></div>
+      <p class="eyebrow">COMUNIDADE • FÉ • UNIÃO</p>
+      <h1>Unidos<br>em Um</h1>
+      <p class="brand-copy">“Há, pois, muitos membros, mas um só corpo.”<span class="brand-copy-reference">1 Coríntios 12:20</span></p>
+    </section>
+    <section class="auth-card reset-card">
+      <div class="mobile-brand"><img class="church-logo" src="logo3d.png" alt="Logo Igreja Pentecostal Unidos em Um"><span>IGREJA PENTECOSTAL<br>UNIDOS EM UM</span></div>
+      <p class="eyebrow">ACESSO À SUA CONTA</p>
+      <h2 id="reset-title">Recuperar senha</h2>
+      <p class="muted" id="reset-description">Informe o e-mail cadastrado. Enviaremos um link seguro para você criar uma nova senha.</p>
+
+      <form id="request-form">
+        <label for="reset-email">E-mail cadastrado</label>
+        <input id="reset-email" type="email" autocomplete="email" placeholder="seu@email.com" required>
+        <button class="primary-btn" type="submit">Enviar link de recuperação</button>
+      </form>
+
+      <form id="new-password-form" class="hidden">
+        <label for="new-password">Nova senha (mínimo 6 caracteres)</label>
+        <input id="new-password" type="password" minlength="6" autocomplete="new-password" placeholder="Digite sua nova senha" required>
+        <label for="confirm-password">Confirmar nova senha</label>
+        <input id="confirm-password" type="password" minlength="6" autocomplete="new-password" placeholder="Digite novamente a nova senha" required>
+        <button class="primary-btn" type="submit">Salvar nova senha</button>
+      </form>
+
+      <p id="reset-message" class="reset-message" role="status" aria-live="polite"></p>
+      <a class="reset-back" href="index.html">← Voltar para o login</a>
+    </section>
+  </main>
+  <script type="module" src="assets/js/recuperar-senha.js"></script>
+</body>
+</html>
