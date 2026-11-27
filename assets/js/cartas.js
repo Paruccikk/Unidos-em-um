@@ -4,7 +4,7 @@ import {ref,get,push,set,onValue} from "https://www.gstatic.com/firebasejs/10.12
 const $=id=>document.getElementById(id);
 let currentUser=null;
 const fields=["church-address","invited-church","event-theme","event-verse","event-date","event-time","event-songs","greeting"];
-function isLeader(p){return p&&(p.admins===true||p.papel==="admin"||p.papel==="editor")}
+function isLeader(p){return p&&(p.admMaster===true||p.admins===true||p.papel==="admin")}
 function datePt(v){if(!v)return"";const [y,m,d]=v.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"})}
 function readLetter(){return {address:$("church-address").value.trim(),invited:$("invited-church").value.trim(),theme:$("event-theme").value.trim(),verse:$("event-verse").value.trim(),date:$("event-date").value,time:$("event-time").value,songs:$("event-songs").value.split("\n").map(s=>s.trim()).filter(Boolean),greeting:$("greeting").value.trim(),createdAt:Date.now(),createdBy:currentUser.uid}}
 function updatePreview(){
@@ -53,6 +53,6 @@ onAuthStateChanged(auth,async user=>{
  currentUser=user;
  try{const snap=await get(ref(db,"members/"+user.uid)),profile=snap.val();if(!isLeader(profile)||profile.status!=="aprovado"&&profile.admins!==true&&profile.papel!=="admin"){location.replace("painel.html");return}
  $("letters-email").textContent=user.email||"";updatePreview();onValue(ref(db,"publicInvites"),renderInvites);
- }catch(error){console.error(error);alert("Não foi possível validar sua permissão de Editor. Tente novamente.");location.replace("painel.html")}
+ }catch(error){console.error(error);alert("Não foi possível validar sua permissão de administrador. Tente novamente.");location.replace("painel.html")}
 });
 $("letters-logout").addEventListener("click",async()=>{await signOut(auth);location.replace("index.html")});
