@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102d26"><title>WhatsApp | Unidos em Um</title><link rel="stylesheet" href="assets/css/style.css?v=20261127-sidebar-mobile"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/logo3d.png?v=20261127"><meta name="theme-color" content="#102d26"><title>WhatsApp | Unidos em Um</title><link rel="stylesheet" href="assets/css/style.css?v=20261127-sidebar-mobile"></head>
 <body class="admin-page">
 <header class="topbar"><a class="brand-small" href="admin.html"><img class="church-logo" src="logo3d.png" alt="Logo"><b>ADMINISTRAÇÃO<br>UNIDOS EM UM</b></a><nav class="main-nav"><a href="admin.html">Administração</a><a href="eventos.html">Calendários/Eventos</a><a href="documentos.html">Documentos</a><a href="whatsapp.html" aria-current="page">WhatsApp</a></nav><div class="top-actions"><span id="wa-owner-email" class="user-email"></span><button id="wa-logout" class="outline-btn">Sair</button></div></header>
 <main class="admin-main">
@@ -14,12 +14,12 @@
 </section>
 <section class="admin-panel" style="max-width:760px;margin:24px auto;text-align:left">
   <h2>Disparo diário de versículo e eventos</h2>
-  <p class="muted">Envia avisos aos membros aprovados que cadastraram um número de WhatsApp. O cadastro do número informa que ele será usado para comunicados internos da igreja. Todos os membros recebem a programação do dia das três congregações (Sede, Filial 1 e Filial 2), independentemente da unidade em que estão cadastrados. Se nenhuma congregação tiver eventos, a mensagem terá somente o versículo.</p>
+  <p class="muted">Envia avisos aos membros aprovados que cadastraram um número de WhatsApp. O cadastro do número informa que ele será usado para comunicados internos da igreja. Todos os membros recebem a programação do dia das três congregações (Sede, Filial 1 e Filial 2), independentemente da unidade em que estão cadastrados. Todos os dias, às 7h (horário de Brasília/São Paulo), o servidor envia automaticamente o versículo do dia e a programação das três congregações para todos os membros aprovados com WhatsApp cadastrado. O envio manual continua disponível para testes.</p>
   <div class="form-actions" style="align-items:center">
     <button id="wa-daily-preview" class="outline-btn" type="button">Conferir destinatários</button>
     <button id="wa-daily-send" class="primary-btn" type="button" disabled>Disparar mensagens de hoje</button>
   </div>
-  <div id="wa-daily-summary" class="message" role="status">Conecte o WhatsApp e confira os destinatários antes do envio.</div>
+  <div id="wa-daily-summary" class="message" role="status">Automação diária programada para 7h (America/Sao_Paulo). O servidor precisa estar ativo e o WhatsApp conectado.</div>
   <div id="wa-daily-preview-list" class="tiny" aria-live="polite"></div>
 </section></main><footer class="footer">IGREJA PENTECOSTAL UNIDOS EM UM</footer>
 <script type="module" src="assets/js/whatsapp.js?v=20261127-todas-congregacoes"></script></body></html>
