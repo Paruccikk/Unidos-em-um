@@ -12,7 +12,7 @@ const monthShort=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","n
 onAuthStateChanged(auth,async user=>{
  if(!user){location.replace("index.html");return}currentUser=user;
  try{const snap=await get(ref(db,"members/"+user.uid));if(!snap.exists()){location.replace("pendente.html");return}
- const p=profile=snap.val();isMaster=(user.email||"").toLowerCase()===MASTER_EMAIL;ownUnit=p.unidadeId||null;const leader=isMaster||p.papel==="admin"||p.papel==="editor";if(p.status!=="aprovado"&&!isMaster&&p.papel!=="admin"){location.replace("pendente.html");return}
+ const p=profile=snap.val();isMaster=(user.email||"").toLowerCase()===MASTER_EMAIL;ownUnit=p.unidadeId||null;const leader=isMaster||p.papel==="admin"||p.papel==="editor";if(p.status!=="aprovado"&&!isMaster){location.replace("pendente.html");return}
  canEdit=leader&&(isMaster||!!ownUnit);selectedUnit=isMaster?"todos":ownUnit||"__none__";$("#events-email").textContent=user.email||"";if(canEdit)$("#event-editor").classList.remove("hidden");
  const filters=$("#unit-filter-buttons");if(filters&&!isMaster)filters.parentElement.hidden=true;const unitSelect=$("#event-unit");if(unitSelect&&!isMaster){unitSelect.value=ownUnit||"";unitSelect.disabled=true;}
  unsubscribe=onValue(ref(db,"events"),s=>{events=s.val()||{};renderUpcoming();renderCalendar();if(selectedDate)renderDay(selectedDate)},e=>{console.error(e);$("#fixed-events").textContent="Não foi possível carregar os eventos. Confira as regras do Firebase.";$("#oneoff-events").textContent="Não foi possível carregar os eventos.";$("#annual-calendar").textContent="Não foi possível carregar o calendário."});
