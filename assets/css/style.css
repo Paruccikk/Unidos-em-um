@@ -462,3 +462,6 @@ body.has-sidebar .top-actions{margin-left:auto}
 .obreiro-field{align-self:end}
 @media(max-width:700px){.admin-stats-units{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:380px){.admin-stats-units{grid-template-columns:1fr}}
+
+/* Ação de exclusão de membro no painel administrativo */
+.danger-btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid #b33a35;background:#fff7f6;color:#a62d28;border-radius:8px;padding:10px 13px;font:700 11px 'DM Sans',sans-serif;cursor:pointer;transition:.2s}.danger-btn:hover{background:#a62d28;color:#fff}.danger-btn:disabled{opacity:.45;cursor:not-allowed}.member-admin-actions{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}.member-view-btn{white-space:nowrap}@media(max-width:560px){.member-admin-actions{justify-content:flex-start}.member-view-btn{flex:1 1 100%}}
