@@ -6,7 +6,7 @@ const require = createRequire(resolve(dirname(fileURLToPath(import.meta.url)), "
 const { initializeApp, applicationDefault, cert, getApps } = require("firebase-admin/app");
 const { getDatabase } = require("firebase-admin/database");
 
-const databaseURL = (process.env.FIREBASE_DATABASE_URL || "https://unidos-em-um-default-rtdb.firebaseio.com").replace(/\\/$/, "");
+const databaseURL = (process.env.FIREBASE_DATABASE_URL || "https://unidos-em-um-default-rtdb.firebaseio.com").replace(/\/+$/, "");
 if (!process.env.GOOGLE_APPLICATION_CREDENTIALS && !process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
   console.error("Configure GOOGLE_APPLICATION_CREDENTIALS ou FIREBASE_SERVICE_ACCOUNT_JSON.");
   process.exit(1);
