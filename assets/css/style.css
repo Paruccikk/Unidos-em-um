@@ -411,3 +411,8 @@ body.has-sidebar .top-actions{margin-left:auto}
  .dashboard .card-details .card-field b{font-size:6px}
  .dashboard .card-footer{font-size:5px}
 }
+
+/* Ajustes finais do menu móvel */
+.sidebar-backdrop{border:0;padding:0;width:100%;height:100%;background:transparent;cursor:default}
+.menu-toggle:focus-visible,.sidebar-nav a:focus-visible{outline:3px solid #c8a96a;outline-offset:3px}
+@media(max-width:900px){body.sidebar-open{overflow:hidden}}
