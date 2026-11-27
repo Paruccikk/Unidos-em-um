@@ -26,7 +26,12 @@ if(topbar&&mainNav){
  const sideNav=document.createElement("nav");
  sideNav.className="sidebar-nav";
  sideNav.setAttribute("aria-label","Menu lateral");
- [...mainNav.querySelectorAll("a")].forEach(link=>sideNav.append(link));
+ [...mainNav.querySelectorAll("a")].forEach(link=>{
+  const copy=link.cloneNode(true);
+  copy.removeAttribute("id");
+  if(link.id)copy.dataset.navId=link.id;
+  sideNav.append(copy);
+ });
  sidebar.append(sideNav);
  const footer=document.createElement("div");
  footer.className="sidebar-footer";
@@ -52,18 +57,23 @@ if(topbar&&mainNav){
  document.addEventListener("keydown",event=>{if(event.key==="Escape")closeMenu()});
 }
 
+function setLinkVisibility(id,hidden){
+ const original=document.getElementById(id);
+ if(original)original.hidden=hidden;
+ document.querySelectorAll('[data-nav-id="'+id+'"]').forEach(link=>link.hidden=hidden);
+}
 onAuthStateChanged(auth,async user=>{
- if(!user){[memberLink,adminLink,eventsLink].forEach(el=>{if(el)el.hidden=true});return}
+ if(!user){["nav-member","nav-admin","nav-events"].forEach(id=>setLinkVisibility(id,true));return}
  try{
   const snap=await get(ref(db,"members/"+user.uid));
   const p=snap.val()||{};
   const admin=p.admins===true||p.papel==="admin";
   const approved=p.status==="aprovado"||admin;
-  if(memberLink)memberLink.hidden=!approved;
-  if(adminLink)adminLink.hidden=!admin;
-  if(eventsLink)eventsLink.hidden=!approved;
+  setLinkVisibility("nav-member",!approved);
+  setLinkVisibility("nav-admin",!admin);
+  setLinkVisibility("nav-events",!approved);
  }catch(e){
   console.error(e);
-  [memberLink,adminLink,eventsLink].forEach(el=>{if(el)el.hidden=true});
+  ["nav-member","nav-admin","nav-events"].forEach(id=>setLinkVisibility(id,true));
  }
 });
