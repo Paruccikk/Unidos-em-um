@@ -10,8 +10,10 @@
       }
     },
     "events": {
-      ".read": "auth != null && (root.child('members').child(auth.uid).child('status').val() === 'aprovado' || root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
-      ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')"
+      ".read": "auth != null && (root.child('members').child(auth.uid).child('status').val() === 'aprovado' || root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin')",
+      "$eventId": {
+        ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || ((root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor') && root.child('members').child(auth.uid).child('status').val() === 'aprovado' && ((data.exists() && data.child('unidadeId').val() === root.child('members').child(auth.uid).child('unidadeId').val() && (!newData.exists() || newData.child('unidadeId').val() === root.child('members').child(auth.uid).child('unidadeId').val())) || (!data.exists() && newData.child('unidadeId').val() === root.child('members').child(auth.uid).child('unidadeId').val()))))"
+      }
     },
     "publicInvites": {
       ".read": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
