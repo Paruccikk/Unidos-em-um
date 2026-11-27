@@ -68,12 +68,12 @@ onAuthStateChanged(auth,async user=>{
  try{
   const snap=await get(ref(db,"members/"+user.uid));
   const p=snap.val()||{};
-  const admin=p.admins===true||p.papel==="admin"||(p.papel==="editor"&&p.status==="aprovado"&&!!p.unidadeId);
+  const admin=p.admMaster===true||p.admins===true||p.papel==="admin";
   const approved=p.status==="aprovado"||admin;
   setLinkVisibility("nav-member",!approved);
   setLinkVisibility("nav-admin",!admin);
   setLinkVisibility("nav-events",!approved);
-  setLinkVisibility("nav-letters",!(admin||p.papel==="editor"));
+  setLinkVisibility("nav-letters",!admin);
  }catch(e){
   console.error(e);
   ["nav-member","nav-admin","nav-events","nav-letters"].forEach(id=>setLinkVisibility(id,true));
