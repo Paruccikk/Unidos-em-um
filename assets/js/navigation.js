@@ -5,6 +5,7 @@ import {ref,get} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-datab
 const memberLink=document.querySelector("#nav-member");
 const adminLink=document.querySelector("#nav-admin");
 const eventsLink=document.querySelector("#nav-events");
+const lettersLink=document.querySelector("#nav-letters");
 const topbar=document.querySelector(".topbar");
 const mainNav=document.querySelector(".main-nav");
 
@@ -63,7 +64,7 @@ function setLinkVisibility(id,hidden){
  document.querySelectorAll('[data-nav-id="'+id+'"]').forEach(link=>link.hidden=hidden);
 }
 onAuthStateChanged(auth,async user=>{
- if(!user){["nav-member","nav-admin","nav-events"].forEach(id=>setLinkVisibility(id,true));return}
+ if(!user){["nav-member","nav-admin","nav-events","nav-letters"].forEach(id=>setLinkVisibility(id,true));return}
  try{
   const snap=await get(ref(db,"members/"+user.uid));
   const p=snap.val()||{};
@@ -72,8 +73,9 @@ onAuthStateChanged(auth,async user=>{
   setLinkVisibility("nav-member",!approved);
   setLinkVisibility("nav-admin",!admin);
   setLinkVisibility("nav-events",!approved);
+  setLinkVisibility("nav-letters",!(admin||p.papel==="editor"));
  }catch(e){
   console.error(e);
-  ["nav-member","nav-admin","nav-events"].forEach(id=>setLinkVisibility(id,true));
+  ["nav-member","nav-admin","nav-events","nav-letters"].forEach(id=>setLinkVisibility(id,true));
  }
 });
