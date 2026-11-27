@@ -18,7 +18,7 @@ const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "https://unidos-em-um-si
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const authDir = process.env.WA_AUTH_DIR || path.join("/tmp", "unidos-em-um-wa-auth");
 
-app.use(cors({ origin(origin, callback) { if (!origin || ALLOWED_ORIGINS.includes(origin)) return callback(null, true); callback(new Error("Origem não autorizada.")); }, methods:["GET","POST","OPTIONS"], allowedHeaders:["Content-Type","Authorization"] }));
+app.use(cors({ origin(origin, callback) { if (!origin || ALLOWED_ORIGINS.includes(origin)) return callback(null, true); callback(new Error("Origem não autorizada.")); }, methods:["GET","POST","DELETE","OPTIONS"], allowedHeaders:["Content-Type","Authorization"] }));
 app.use(express.json({ limit:"8mb" }));
 
 let sock = null;
