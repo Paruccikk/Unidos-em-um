@@ -5,7 +5,8 @@
     "masterAdmins": {
       ".write": false,
       "$uid": {
-        ".read": "auth != null && (auth.uid === $uid || root.child('masterAdmins').child(auth.uid).val() === true)"
+        ".read": "auth != null && (auth.uid === $uid || root.child('masterAdmins').child(auth.uid).val() === true)",
+        ".write": "auth != null && root.child('masterAdmins').child(auth.uid).val() === true"
       }
     },
     "members": {
