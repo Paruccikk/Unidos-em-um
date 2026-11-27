@@ -353,7 +353,7 @@ app.delete("/api/admin/members/:uid",requireMemberManager,async(req,res)=>{
     const memberSnap = await memberRef.get();
     if (!memberSnap.exists()) return res.status(404).json({error:"Cadastro não encontrado."});
     const member = memberSnap.val() || {};
-    if (!req.isMaster && member.unidadeId !== req.managerProfile.unidadeId) return res.status(403).json({error:"Você só pode excluir membros da sua própria igreja."});
+    if (!req.isMaster && member.unidadeId !== req.managerProfile.unidadeId && member.unidadeSolicitada !== req.managerProfile.unidadeId) return res.status(403).json({error:"Você só pode excluir membros da sua própria igreja."});
     const targetMaster = await services.db.ref("masterAdmins/"+uid).get();
     if (targetMaster.val() === true) return res.status(403).json({error:"A conta Master não pode ser excluída por administradores de unidade."});
     try {
