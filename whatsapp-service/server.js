@@ -68,8 +68,7 @@ async function requireMemberManager(req,res,next) {
     if (!identityResponse.ok || !account) return res.status(401).json({error:"Sessão Firebase inválida. Entre novamente."});
     const profileResponse = await fetch(DB_URL+"/members/"+encodeURIComponent(account.localId)+".json?auth="+encodeURIComponent(token));
     const profile = await profileResponse.json();
-    const masterResponse = await fetch(DB_URL+"/masterAdmins/"+encodeURIComponent(account.localId)+".json?auth="+encodeURIComponent(token));
-    const master = (masterResponse.ok && (await masterResponse.json()) === true) || profile?.admMaster === true;
+    const master = profile?.admMaster === true;
     const manager = profile?.status === "aprovado" && (profile?.papel === "admin" || profile?.admins === true) && !!profile?.unidadeId;
     if (!master && !manager) return res.status(403).json({error:"Sua conta não possui permissão para gerenciar membros."});
     req.owner = account;
@@ -354,8 +353,7 @@ app.delete("/api/admin/members/:uid",requireMemberManager,async(req,res)=>{
     if (!memberSnap.exists()) return res.status(404).json({error:"Cadastro não encontrado."});
     const member = memberSnap.val() || {};
     if (!req.isMaster && member.unidadeId !== req.managerProfile.unidadeId && member.unidadeSolicitada !== req.managerProfile.unidadeId) return res.status(403).json({error:"Você só pode excluir membros da sua própria igreja."});
-    const targetMaster = await services.db.ref("masterAdmins/"+uid).get();
-    const targetIsAdmin = targetMaster.val() === true || member.admMaster === true || member.admins === true || member.papel === "admin";
+    const targetIsAdmin = member.admMaster === true || member.admins === true || member.papel === "admin";
     if (!req.isMaster && targetIsAdmin) return res.status(403).json({error:"Somente o Admin Master pode excluir contas de administrador."});
     try {
       await services.auth.deleteUser(uid);
@@ -363,7 +361,6 @@ app.delete("/api/admin/members/:uid",requireMemberManager,async(req,res)=>{
       if (error?.code !== "auth/user-not-found") throw error;
     }
     await memberRef.remove();
-    if (req.isMaster) await services.db.ref("masterAdmins/"+uid).remove();
     return res.json({ok:true,uid,deletedAuthAccount:true});
   } catch (error) {
     console.error("Falha ao excluir membro:",error);
