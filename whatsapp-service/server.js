@@ -55,6 +55,32 @@ async function requireOwner(req,res,next) {
   }
 }
 
+async function requireMemberManager(req,res,next) {
+  try {
+    const token = String(req.headers.authorization || "").replace(/^Bearer\s+/i,"");
+    if (!token) return res.status(401).json({error:"Faça login para continuar."});
+    if (!API_KEY) return res.status(500).json({error:"FIREBASE_API_KEY não configurada no serviço."});
+    const identityResponse = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:lookup?key="+encodeURIComponent(API_KEY), {
+      method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({idToken:token})
+    });
+    const identity = await identityResponse.json();
+    const account = identity.users?.[0];
+    if (!identityResponse.ok || !account) return res.status(401).json({error:"Sessão Firebase inválida. Entre novamente."});
+    const profileResponse = await fetch(DB_URL+"/members/"+encodeURIComponent(account.localId)+".json?auth="+encodeURIComponent(token));
+    const profile = await profileResponse.json();
+    const master = profile?.admins === true;
+    const manager = profile?.status === "aprovado" && (profile?.papel === "admin" || profile?.papel === "editor") && !!profile?.unidadeId;
+    if (!master && !manager) return res.status(403).json({error:"Sua conta não possui permissão para gerenciar membros."});
+    req.owner = account;
+    req.managerProfile = profile;
+    req.isMaster = master;
+    next();
+  } catch (error) {
+    console.error("Falha ao validar acesso de gestão de membros:",error);
+    res.status(500).json({error:"Não foi possível validar sua sessão."});
+  }
+}
+
 function status() {
   return { connected, connecting, qr:qrDataUrl, phone, error:lastError, owner:ADMIN_EMAIL };
 }
@@ -314,7 +340,7 @@ app.post("/api/whatsapp/daily/send",requireOwner,async(req,res)=>{
 });
 
 
-app.delete("/api/admin/members/:uid",requireOwner,async(req,res)=>{
+app.delete("/api/admin/members/:uid",requireMemberManager,async(req,res)=>{
   try {
     const uid = String(req.params.uid || "").trim();
     if (!uid || uid.length > 128 || uid.includes("/") || uid === req.owner.localId) {
@@ -326,7 +352,8 @@ app.delete("/api/admin/members/:uid",requireOwner,async(req,res)=>{
     const memberSnap = await memberRef.get();
     if (!memberSnap.exists()) return res.status(404).json({error:"Cadastro não encontrado."});
     const member = memberSnap.val() || {};
-    if (String(member.email || "").toLowerCase() === ADMIN_EMAIL) {
+    if (!req.isMaster && member.unidadeId !== req.managerProfile.unidadeId) return res.status(403).json({error:"Você só pode excluir membros da sua própria igreja."});
+    if (member.admins === true || String(member.email || "").toLowerCase() === ADMIN_EMAIL) {
       return res.status(403).json({error:"A conta principal da igreja não pode ser excluída por aqui."});
     }
     try {
