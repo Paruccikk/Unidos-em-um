@@ -14,8 +14,11 @@
       ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')"
     },
     "publicInvites": {
-      ".read": true,
-      ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')"
+      ".read": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
+      ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
+      "$inviteId": {
+        ".read": true
+      }
     },
     "inviteConfirmations": {
       ".read": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
