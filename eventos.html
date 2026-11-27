@@ -36,7 +36,7 @@
 <main class="events-main">
 <section class="events-heading">
 <div><p class="eyebrow">AGENDA DAS CONGREGAÇÕES</p><h1>Calendários e Eventos</h1><p class="muted">A programação da Sede e das Filiais em um só lugar.</p></div>
-<div class="events-filters"><label>Exibir programação</label><div id="unit-filter-buttons" class="unit-filter-buttons" role="group" aria-label="Filtrar por igreja"><button type="button" class="filter-chip active" data-unit-filter="todos" aria-pressed="true">TODAS</button><button type="button" class="filter-chip" data-unit-filter="sede" aria-pressed="false">SEDE</button><button type="button" class="filter-chip" data-unit-filter="filial2" aria-pressed="false">FILIAL 1</button><button type="button" class="filter-chip" data-unit-filter="filial3" aria-pressed="false">FILIAL 2</button></div></div>
+<div id="unit-filter-buttons" class="events-filters"><label>Exibir programação</label><div id="unit-filter-buttons" class="unit-filter-buttons" role="group" aria-label="Filtrar por igreja"><button type="button" class="filter-chip active" data-unit-filter="todos" aria-pressed="true">TODAS</button><button type="button" class="filter-chip" data-unit-filter="sede" aria-pressed="false">SEDE</button><button type="button" class="filter-chip" data-unit-filter="filial2" aria-pressed="false">FILIAL 1</button><button type="button" class="filter-chip" data-unit-filter="filial3" aria-pressed="false">FILIAL 2</button></div></div>
 </section>
 
 
@@ -47,7 +47,7 @@
 </section>
 
 <section id="event-editor" class="event-editor hidden">
-<div class="section-heading"><div><p class="eyebrow">GESTÃO DA PROGRAMAÇÃO</p><h2 id="event-form-title">Adicionar evento</h2><p class="muted">Disponível para usuários com acesso de Admin ou Editor.</p></div></div>
+<div class="section-heading"><div><p class="eyebrow">GESTÃO DA PROGRAMAÇÃO</p><h2 id="event-form-title">Adicionar evento</h2><p class="muted">Disponível para administradores e editores da própria igreja.</p></div></div>
 <form id="event-form"><input id="event-id" type="hidden"><div class="event-form-grid">
 <div class="field"><label for="event-title">Título do evento *</label><input id="event-title" maxlength="120" required placeholder="Ex.: Culto de celebração"></div>
 <div class="field"><label for="event-unit">Igreja *</label><select id="event-unit" required><option value="sede">Sede</option><option value="filial2">Filial 1</option><option value="filial3">Filial 2</option></select></div>
@@ -71,5 +71,5 @@
 </section>
 </main>
 <footer class="footer">IGREJA PENTECOSTAL UNIDOS EM UM • “Há, pois, muitos membros, mas um só corpo.” — 1 Coríntios 12:20</footer>
-<script type="module" src="assets/js/navigation.js?v=20261127-cartas"></script><script type="module" src="assets/js/eventos.js?v=20261124-unidades-wa"></script>
+<script type="module" src="assets/js/navigation.js?v=20261127-cartas"></script><script type="module" src="assets/js/eventos.js?v=20261127-unidade-permissoes"></script>
 </body></html>
