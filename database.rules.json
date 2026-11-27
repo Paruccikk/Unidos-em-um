@@ -13,6 +13,18 @@
       ".read": "auth != null && (root.child('members').child(auth.uid).child('status').val() === 'aprovado' || root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
       ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')"
     },
+    "publicInvites": {
+      ".read": true,
+      ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')"
+    },
+    "inviteConfirmations": {
+      ".read": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
+      "$inviteId": {
+        "$responseId": {
+          ".write": "auth == null && !data.exists() && newData.hasChildren(['name','ministry','group','createdAt']) && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 100 && newData.child('ministry').isString() && newData.child('ministry').val().length > 0 && newData.child('ministry').val().length <= 120 && newData.child('group').isString() && newData.child('group').val().length > 0 && newData.child('group').val().length <= 120 && newData.child('createdAt').isNumber()"
+        }
+      }
+    },
     "documents": {
       ".read": "auth != null && (root.child('members').child(auth.uid).child('status').val() === 'aprovado' || root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')",
       ".write": "auth != null && (root.child('members').child(auth.uid).child('admins').val() === true || root.child('members').child(auth.uid).child('papel').val() === 'admin' || root.child('members').child(auth.uid).child('papel').val() === 'editor')"
