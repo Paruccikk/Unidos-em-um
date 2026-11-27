@@ -226,7 +226,8 @@ async function runAutomaticDailyWhatsApp() {
     if (!services) throw new Error("Firebase Admin não está configurado para o disparo automático.");
     runRef = services.db.ref("system/whatsappDailyRuns/"+now.date);
     const lock = await runRef.transaction(current => {
-      if (current?.status === "sent" || current?.status === "sending") return;
+      if (current?.status === "sent") return;
+      if (current?.status === "sending" && Date.now()-Number(current.startedAt||Date.now()) < 30*60*1000) return;
       return {status:"sending", startedAt:Date.now(), scheduledTime:"07:00", timezone:"America/Sao_Paulo"};
     });
     if (!lock.committed) return;
