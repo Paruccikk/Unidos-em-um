@@ -110,7 +110,10 @@ async function previewDaily(){
   const list=document.createElement("p");list.textContent="Destinatários: "+previews.join(", ");$("#wa-daily-preview-list").append(list);
   $("#wa-daily-send").disabled=true;
   const status=await api("/api/whatsapp/status");render(status);
-  $("#wa-daily-send").disabled=!status.connected;
+  const automatic=await api("/api/whatsapp/daily/status");
+  const alreadySent=automatic.run?.status==="sent";
+  $("#wa-daily-send").disabled=!status.connected||alreadySent;
+  if(alreadySent)dailyShow("As mensagens automáticas de hoje já foram processadas: "+automatic.run.sent+" enviada(s), "+automatic.run.failed+" falha(s). O próximo disparo será amanhã às 7h.",true);
  }catch(e){
   console.error("Falha ao preparar disparo diário:",e);
   dailyShow(e.code==="auth/network-request-failed"?"Falha de rede na autenticação Firebase. Verifique sua conexão, bloqueadores do navegador e os domínios autorizados no Firebase.":e.message);
