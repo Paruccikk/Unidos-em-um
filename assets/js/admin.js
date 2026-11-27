@@ -91,7 +91,7 @@ if(manualForm)manualForm.addEventListener("submit",async e=>{e.preventDefault();
 function accessRole(m){return m.admMaster===true?"admMaster":m.admins===true||m.papel==="admin"?"admin":"usuario"}
 function renderAccessUsers(list){
  const panel=document.querySelector(".access-panel");if(panel)panel.hidden=!isMaster;const host=$("#access-list");if(!host||!isMaster)return;host.replaceChildren();
- const users=visibleMemberList(list).filter(m=>m.status==="aprovado"||m.admins===true||m.papel==="admin"||m.papel==="editor").sort((a,b)=>(a.nome||"").localeCompare(b.nome||"","pt-BR"));
+ const users=visibleMemberList(list).filter(m=>m.status==="aprovado"||m.admins===true||m.papel==="admin").sort((a,b)=>(a.nome||"").localeCompare(b.nome||"","pt-BR"));
  if(!users.length){host.innerHTML='<div class="admin-empty">Nenhum usuário aprovado encontrado.</div>';return}
  users.forEach(m=>{
   const row=document.createElement("div");row.className="access-user-row";
