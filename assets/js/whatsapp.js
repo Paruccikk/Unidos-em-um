@@ -3,7 +3,7 @@ import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.
 import {ref,get} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const OWNER="danielparuccikk@gmail.com";
-const API="https://unidos-em-um-whatsapp-qr.onrender.com";
+const API="";
 const $=s=>document.querySelector(s);
 let currentUser=null,polling=null,dailyMessages=[],dailyDate="";
 const units={sede:"Sede",filial2:"Filial 1",filial3:"Filial 2"};
