@@ -5,7 +5,8 @@ import {isMasterAdmin} from "./permissions.js";
 const $=s=>document.querySelector(s),units={sede:{name:"Sede",pastor:"Pastor Presidente Edi Carlos"},filial2:{name:"Filial 1",pastor:"Pastor Local Daniel Parucci"},filial3:{name:"Filial 2 - BA",pastor:"Pastor Local a definir"}};
 let admin=null,adminProfile=null,isMaster=false,ownUnit=null,approvedFilter="todos",approvedSearch="",allMembers=[];
 function memberUnitId(m){return m?.unidadeId||m?.unidadeSolicitada||null}
-function isAdminAccount(m){return !!m&&(m.admMaster===true||m.admins===true||m.papel==="admin")}\nfunction canManageMember(m){return !!m&&(isMaster||(!isAdminAccount(m)&&!!ownUnit&&memberUnitId(m)===ownUnit))}
+function isAdminAccount(m){return !!m&&(m.admMaster===true||m.admins===true||m.papel==="admin")}
+function canManageMember(m){return !!m&&(isMaster||(!isAdminAccount(m)&&!!ownUnit&&memberUnitId(m)===ownUnit))}
 function visibleMemberList(list){return list}
 const WHATSAPP_OWNER="danielparuccikk@gmail.com";
 onAuthStateChanged(auth,async user=>{if(!user){location.replace("index.html");return}try{const snap=await get(ref(db,"members/"+user.uid));if(!snap.exists()){location.replace("painel.html");return}adminProfile=snap.val();isMaster=await isMasterAdmin(user,db)||adminProfile.admMaster===true;ownUnit=adminProfile.unidadeId||null;const canEnter=isMaster||((adminProfile.papel==="admin"||adminProfile.admins===true)&&adminProfile.status==="aprovado"&&!!ownUnit);if(!canEnter){location.replace("painel.html");return}admin=user;$("#admin-email").textContent=user.email||"";const waLink=$("#nav-whatsapp");if(waLink)waLink.hidden=(user.email||"").toLowerCase()!==WHATSAPP_OWNER;configureUnitScope();await loadMembers()}catch(e){console.error(e);message("Não foi possível validar o administrador. Verifique as regras do Firebase.")}});
