@@ -452,3 +452,13 @@ body.has-sidebar .top-actions{margin-left:auto}
  .daily-verse-label{font-size:8px}
  .daily-verse-mobile{display:block}
 }
+
+
+/* Resumo geral por unidade e identificação de obreiros */
+.admin-stats-units{grid-template-columns:repeat(3,minmax(0,1fr));}
+.admin-stats-units .admin-stat small{display:block;margin-top:5px;color:var(--muted);font-size:10px;line-height:1.35}
+.checkbox-field{display:flex!important;align-items:center;gap:9px;min-height:42px;padding:10px 12px;border:1px solid #dfcdb6;border-radius:9px;background:#fffefa;color:var(--ink);font-size:12px;font-weight:700;cursor:pointer}
+.checkbox-field input{width:17px;height:17px;min-height:17px;accent-color:var(--green)}
+.obreiro-field{align-self:end}
+@media(max-width:700px){.admin-stats-units{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:380px){.admin-stats-units{grid-template-columns:1fr}}
