@@ -342,3 +342,72 @@ input,select,textarea{font-size:16px}
 
 /* Gestão e pré-visualização de carteirinhas */
 .member-admin-actions{display:flex;gap:8px;flex-wrap:wrap}.member-card-preview-wrap{width:100%;overflow-x:auto;padding:5px 0 14px}.member-card-preview-wrap .member-card{width:100%;min-width:560px;max-width:650px}.member-edit-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.member-edit-form .message{grid-column:1/-1}.member-edit-form [type=submit]{grid-column:1/-1}.manual-member-panel .event-form-grid{margin-top:12px}@media(max-width:650px){.member-admin-actions{width:100%}.member-admin-actions button{flex:1}.member-edit-form{grid-template-columns:1fr}.member-edit-form .message,.member-edit-form [type=submit]{grid-column:auto}}
+
+
+/* Navegação lateral responsiva - Unidos em Um */
+.app-sidebar{position:fixed;z-index:1000;inset:0 auto 0 0;width:258px;padding:25px 17px;background:linear-gradient(165deg,#102c24 0%,#173d32 62%,#245746 100%);color:#fff;display:flex;flex-direction:column;box-shadow:12px 0 35px #102c2412}
+.sidebar-brand{display:flex;align-items:center;gap:11px;padding:5px 8px 24px;color:#fff;text-decoration:none;border-bottom:1px solid #ffffff20;font:700 10px/1.5 'DM Sans',sans-serif;letter-spacing:1px}
+.sidebar-brand img{width:48px;height:48px;object-fit:contain}
+.sidebar-caption{margin:25px 10px 10px;color:#c8a96a;font-size:9px;font-weight:800;letter-spacing:1.8px}
+.sidebar-nav{display:grid;gap:6px}
+.sidebar-nav a{display:flex;align-items:center;gap:12px;padding:12px 13px;border-radius:9px;color:#d7e2da;text-decoration:none;font-size:12px;font-weight:700;transition:background .18s,color .18s}
+.sidebar-nav a:before{content:"";width:7px;height:7px;border:1.5px solid #c8a96a;border-radius:2px;transform:rotate(45deg);flex:0 0 7px}
+.sidebar-nav a:hover,.sidebar-nav a[aria-current="page"]{background:#ffffff17;color:#fff}
+.sidebar-nav a[aria-current="page"]{box-shadow:inset 3px 0 #c8a96a}
+.sidebar-nav a[hidden]{display:none!important}
+.sidebar-footer{margin-top:auto;padding:16px 10px 4px;border-top:1px solid #ffffff20;color:#b8c9be;font-size:9px;line-height:1.7}
+.menu-toggle{display:none;border:1px solid var(--line);background:#fff;color:var(--green);border-radius:9px;width:40px;height:40px;font-size:21px;line-height:1}
+.sidebar-backdrop{display:none}
+body.has-sidebar .topbar{margin-left:258px;width:calc(100% - 258px);padding-left:28px;padding-right:28px}
+body.has-sidebar .dashboard,body.has-sidebar .admin-main,body.has-sidebar .events-main{margin-left:258px;margin-right:0;width:calc(100% - 258px);max-width:none;padding-left:clamp(22px,4vw,58px);padding-right:clamp(22px,4vw,58px)}
+body.has-sidebar .footer{margin-left:258px}
+body.has-sidebar .main-nav{display:none!important}
+body.has-sidebar .topbar{justify-content:flex-end}
+body.has-sidebar .topbar>.brand-small{display:none}
+body.has-sidebar .top-actions{margin-left:auto}
+@media(max-width:900px){
+ .app-sidebar{width:280px;transform:translateX(-105%);transition:transform .24s ease;box-shadow:18px 0 45px #0003}
+ body.sidebar-open .app-sidebar{transform:translateX(0)}
+ .sidebar-backdrop{display:block;position:fixed;z-index:999;inset:0;background:#101b16a8;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+ body.sidebar-open .sidebar-backdrop{opacity:1;visibility:visible}
+ .menu-toggle{display:inline-grid;place-items:center;flex:0 0 40px}
+ body.has-sidebar .topbar{margin:0;width:100%;min-height:66px;height:auto;padding:10px 14px;justify-content:flex-start;gap:10px}
+ body.has-sidebar .topbar>.brand-small{display:flex;flex:1;min-width:0}
+ body.has-sidebar .topbar>.brand-small b{display:block;font-size:8px;letter-spacing:.5px;max-width:170px}
+ body.has-sidebar .top-actions{margin-left:auto}
+ body.has-sidebar .dashboard,body.has-sidebar .admin-main,body.has-sidebar .events-main{margin:22px auto;width:100%;max-width:1160px;padding:0 14px}
+ body.has-sidebar .footer{margin-left:0}
+}
+@media(max-width:560px){
+ .sidebar-brand{padding-bottom:18px}
+ .dashboard .welcome{gap:12px}
+ .dashboard .welcome h1{font-size:27px;line-height:1.15}
+ .dashboard .welcome .muted{font-size:12px}
+ .dashboard .settings-toggle{width:100%;justify-content:center}
+ .dashboard .card-area,.dashboard .side-note,.dashboard .settings-panel{padding:15px;border-radius:12px}
+ .dashboard .section-heading h2{font-size:19px}
+ .dashboard .member-card{padding:15px 12px 12px;min-height:0}
+ .dashboard .card-top{gap:9px}
+ .dashboard .card-logo{width:40px;flex-basis:40px}
+ .dashboard .card-logo img{width:40px;height:40px;object-fit:contain}
+ .dashboard .card-church{font-size:8px;letter-spacing:1px}
+ .dashboard .card-main{gap:9px;padding:13px 0;min-height:0}
+ .dashboard .photo-frame{width:76px;height:100px}
+ .dashboard .card-details h3{font-size:14px}
+ .dashboard .card-details .card-field{gap:4px;align-items:flex-start}
+ .dashboard .card-details .card-field span{min-width:65px;font-size:6px}
+ .dashboard .card-details .card-field b{font-size:7px;line-height:1.35}
+ .dashboard .card-footer{font-size:6px;line-height:1.45}
+ .dashboard .card-actions .primary-btn{width:100%}
+ .dashboard .form-grid{grid-template-columns:1fr}
+ .dashboard .form-actions{flex-direction:column-reverse}
+ .dashboard .form-actions button{width:100%}
+}
+@media(max-width:380px){
+ .dashboard .card-main{gap:7px}
+ .dashboard .photo-frame{width:66px;height:90px}
+ .dashboard .card-details .card-field span{min-width:58px}
+ .dashboard .card-details h3{font-size:12px}
+ .dashboard .card-details .card-field b{font-size:6px}
+ .dashboard .card-footer{font-size:5px}
+}
