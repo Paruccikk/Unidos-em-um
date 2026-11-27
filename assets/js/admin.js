@@ -1,6 +1,6 @@
 import {auth,db} from "./firebase.js";
 import {onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {ref,get,update,push,set,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {ref,get,update,push,set,remove,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const $=s=>document.querySelector(s),units={sede:{name:"Sede",pastor:"Pastor Presidente Edi Carlos"},filial2:{name:"Filial 1",pastor:"Pastor Local Daniel Parucci"},filial3:{name:"Filial 2",pastor:"Pastor Local a definir"}};
 let admin=null,approvedFilter="todos",approvedSearch="",allMembers=[];
 const WHATSAPP_OWNER="danielparuccikk@gmail.com";
@@ -12,7 +12,30 @@ function normalizeSearch(value){return String(value||"").normalize("NFD").replac
 function renderApproved(approved){const host=$("#approved-list");const filter=approvedFilter;const query=normalizeSearch(approvedSearch);const filtered=approved.filter(m=>{const unitMatch=filter==="todos"||m.unidadeId===filter;const cardId=String(m.uid||"").slice(0,8).toUpperCase();const searchText=normalizeSearch([m.nome,m.uid,cardId,m.email].join(" "));return unitMatch&&(!query||searchText.includes(query))});$("#approved-summary").textContent=filtered.length+" cadastro(s) encontrado(s)"+(filter==="todos"?" no total":" em "+units[filter].name)+".";document.querySelectorAll("[data-approved-filter]").forEach(button=>{const active=button.dataset.approvedFilter===filter;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active))});
 host.replaceChildren();if(!filtered.length){host.innerHTML='<div class="admin-empty">Nenhum cadastro encontrado para este filtro.</div>';return}
 filtered.sort((a,b)=>(a.nome||"").localeCompare(b.nome||"","pt-BR"));
-for(const m of filtered){const card=document.createElement("article");card.className="approved-member-card";const info=document.createElement("div");const h=document.createElement("h3");h.textContent=m.nome||"Nome não informado";const meta=document.createElement("p");meta.textContent=m.email||"Sem e-mail";const unit=document.createElement("span");unit.className="approved-unit";unit.textContent=units[m.unidadeId]?.name||m.unidadeNome||"Unidade não definida";const role=document.createElement("small");role.textContent=(m.cargo||"Membro")+" • "+(m.admins===true||m.papel==="admin"?"Admin":m.papel==="editor"?"Editor":"Usuário/Membro")+(m.obreiro===true?" • OBREIRO":"");const status=document.createElement("small");status.className="approved-member-status";status.textContent=m.status==="aprovado"?"APROVADO":m.status==="pendente"?"PENDENTE":(m.status||"CADASTRO");const id=document.createElement("small");id.className="approved-member-id";id.textContent="ID da carteirinha: "+String(m.uid||"").slice(0,8).toUpperCase();info.append(h,meta,unit,role,status,id);const actions=document.createElement("div");actions.className="member-admin-actions";const view=document.createElement("button");view.type="button";view.className="outline-btn member-view-btn";view.textContent="Ver carteirinha";view.addEventListener("click",()=>showMemberCard(m));const edit=document.createElement("button");edit.type="button";edit.className="primary-btn member-view-btn";edit.textContent="Editar";edit.addEventListener("click",()=>showMemberCard(m,true));actions.append(view,edit);card.append(info,actions);host.append(card)}}
+for(const m of filtered){const card=document.createElement("article");card.className="approved-member-card";const info=document.createElement("div");const h=document.createElement("h3");h.textContent=m.nome||"Nome não informado";const meta=document.createElement("p");meta.textContent=m.email||"Sem e-mail";const unit=document.createElement("span");unit.className="approved-unit";unit.textContent=units[m.unidadeId]?.name||m.unidadeNome||"Unidade não definida";const role=document.createElement("small");role.textContent=(m.cargo||"Membro")+" • "+(m.admins===true||m.papel==="admin"?"Admin":m.papel==="editor"?"Editor":"Usuário/Membro")+(m.obreiro===true?" • OBREIRO":"");const status=document.createElement("small");status.className="approved-member-status";status.textContent=m.status==="aprovado"?"APROVADO":m.status==="pendente"?"PENDENTE":(m.status||"CADASTRO");const id=document.createElement("small");id.className="approved-member-id";id.textContent="ID da carteirinha: "+String(m.uid||"").slice(0,8).toUpperCase();info.append(h,meta,unit,role,status,id);const actions=document.createElement("div");actions.className="member-admin-actions";const view=document.createElement("button");view.type="button";view.className="outline-btn member-view-btn";view.textContent="Ver carteirinha";view.addEventListener("click",()=>showMemberCard(m));const edit=document.createElement("button");edit.type="button";edit.className="primary-btn member-view-btn";edit.textContent="Editar";edit.addEventListener("click",()=>showMemberCard(m,true));const del=document.createElement("button");del.type="button";del.className="danger-btn member-view-btn";del.textContent="Excluir usuário";del.disabled=m.uid===admin?.uid;del.title=del.disabled?"Não é possível excluir a própria conta de administrador.":"Excluir cadastro e conta de acesso";del.addEventListener("click",()=>deleteMember(m,del));actions.append(view,edit,del);card.append(info,actions);host.append(card)}}
+
+
+async function deleteMember(m,button){
+ if(!admin||!m?.uid||m.uid===admin.uid)return;
+ const name=m.nome||m.email||"este membro";
+ if(!window.confirm("ATENÇÃO: deseja excluir definitivamente "+name+"?\\n\\nEsta ação remove o cadastro e, quando existir, a conta de login do Firebase. Não pode ser desfeita."))return;
+ const typed=window.prompt('Para confirmar a exclusão de "'+name+'", digite EXCLUIR:');
+ if(typed!=="EXCLUIR")return;
+ button.disabled=true;button.textContent="Excluindo...";
+ try{
+  const token=await auth.currentUser.getIdToken(true);
+  const response=await fetch("/api/admin/members/"+encodeURIComponent(m.uid),{method:"DELETE",headers:{Authorization:"Bearer "+token}});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(result.error||"Não foi possível excluir o usuário.");
+  message("Cadastro de "+name+" excluído com sucesso.",true);
+  const dialog=document.getElementById("member-card-dialog");if(dialog)dialog.close();
+  await loadMembers();
+ }catch(error){
+  console.error("Falha ao excluir membro:",error);
+  message(error.message||"Não foi possível excluir o usuário.");
+  button.disabled=false;button.textContent="Excluir usuário";
+ }
+}
 
 async function approve(uid,unitId,button){if(!admin||!units[unitId])return;button.disabled=true;button.textContent="Aprovando...";try{await update(ref(db,"members/"+uid),{status:"aprovado",papel:"membro",unidadeId:unitId,unidadeNome:units[unitId].name,pastorUnidade:units[unitId].pastor,aprovadoPor:admin.uid,aprovadoEm:serverTimestamp(),atualizadoEm:serverTimestamp()});message("Membro aprovado e vinculado à "+units[unitId].name+".",true);await loadMembers()}catch(e){console.error(e);message("Não foi possível aprovar. Verifique as regras do Realtime Database.")}finally{button.disabled=false;button.textContent="Aprovar membro"}}
 function formatDate(v){if(!v)return"data não informada";const d=new Date(v);return Number.isNaN(d.getTime())?"data não informada":d.toLocaleDateString("pt-BR")}
@@ -28,7 +51,7 @@ function showMemberCard(m,openEdit=false){
  const wrap=document.createElement("div");wrap.className="member-card-preview-wrap";
  const card=document.createElement("article");card.id="admin-print-card";card.className="member-card";
  const top=document.createElement("div");top.className="card-top";
- const logo=document.createElement("div");logo.className="card-logo";const logoImg=document.createElement("img");logoImg.className="church-logo";logoImg.src="logo%203d.jpeg";logoImg.alt="Logo da igreja";logo.append(logoImg);
+ const logo=document.createElement("div");logo.className="card-logo";const logoImg=document.createElement("img");logoImg.className="church-logo";logoImg.src="./logo3d.png";logoImg.alt="Logo da igreja";logo.append(logoImg);
  const church=document.createElement("div");church.className="card-church";church.innerHTML="IGREJA PENTECOSTAL<br>UNIDOS EM UM<small>CARTEIRA DE MEMBRO</small>";
  const seal=document.createElement("div");seal.className="card-seal";seal.textContent="✦";top.append(logo,church,seal);
  const main=document.createElement("div");main.className="card-main";
