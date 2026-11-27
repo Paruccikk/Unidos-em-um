@@ -68,7 +68,7 @@ onAuthStateChanged(auth,async user=>{
  try{
   const snap=await get(ref(db,"members/"+user.uid));
   const p=snap.val()||{};
-  const admin=p.admins===true||p.papel==="admin";
+  const admin=p.admins===true||p.papel==="admin"||(p.papel==="editor"&&p.status==="aprovado"&&!!p.unidadeId);
   const approved=p.status==="aprovado"||admin;
   setLinkVisibility("nav-member",!approved);
   setLinkVisibility("nav-admin",!admin);
