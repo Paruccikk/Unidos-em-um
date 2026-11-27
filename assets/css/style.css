@@ -416,3 +416,21 @@ body.has-sidebar .top-actions{margin-left:auto}
 .sidebar-backdrop{border:0;padding:0;width:100%;height:100%;background:transparent;cursor:default}
 .menu-toggle:focus-visible,.sidebar-nav a:focus-visible{outline:3px solid #c8a96a;outline-offset:3px}
 @media(max-width:900px){body.sidebar-open{overflow:hidden}}
+
+
+/* Desktop mantém a navegação horizontal original; menu lateral somente no mobile */
+@media(min-width:901px){
+ .app-sidebar,.sidebar-backdrop,.menu-toggle{display:none!important}
+ body.has-sidebar .topbar{margin-left:0!important;width:100%!important;padding-left:max(calc((100vw - 1160px)/2),28px)!important;padding-right:max(calc((100vw - 1160px)/2),28px)!important;justify-content:space-between!important}
+ body.has-sidebar .topbar>.brand-small{display:flex!important}
+ body.has-sidebar .main-nav{display:flex!important}
+ body.has-sidebar .top-actions{margin-left:0!important}
+ body.has-sidebar .dashboard{max-width:1160px!important;width:auto!important;margin:55px auto!important;padding:0 25px!important}
+ body.has-sidebar .admin-main{max-width:1160px!important;width:auto!important;margin:42px auto!important;padding:0 25px!important}
+ body.has-sidebar .events-main{max-width:1160px!important;width:auto!important;margin:42px auto!important;padding:0 25px!important}
+ body.has-sidebar .footer{margin-left:0!important}
+}
+@media(max-width:900px){
+ body.has-sidebar .main-nav{display:none!important}
+ .app-sidebar{display:flex}
+}
